@@ -3,21 +3,12 @@ import cors from "cors";
 import mongoose from "mongoose";
 import listEndpoints from "express-list-endpoints";
 
-<<<<<<< Updated upstream
-import authorsRouter from "./authors/index.js";
-
 const server = express();
 
-const PORT = 3001;
-
 server.use(cors());
-
 server.use(express.json());
-
-server.use("/authors", authorsRouter);
-
 console.log(listEndpoints(server));
-=======
+
 import {
   unAuthorizedHandler,
   forbiddenErrHandler,
@@ -25,37 +16,38 @@ import {
   badReqErrHandler,
   notFoundErrHandler,
 } from "./errorHandlers.js";
+
+import usersRouter from "./services/usersRouter.js";
+
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const publicDirectory = path.join(__dirname, "../public");
-
-const server = express();
+// const publicDirectory = path.join(__dirname, "../public");
 
 const { PORT, MONGODB_CONNECT } = process.env;
 
-const whiteList = ["http://localhost:3000"];
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (whiteList.some((allowedUrl) => allowedUrl === origin)) {
-      callback(null, true);
-    } else {
-      const error = new Error("Not allowed by cors!");
-      error.status = 403;
-      callback(error);
-    }
-  },
-};
+// const whiteList = ["http://localhost:4000"];
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     if (whiteList.some((allowedUrl) => allowedUrl === origin)) {
+//       callback(null, true);
+//     } else {
+//       const error = new Error("Not allowed by cors!");
+//       error.status = 403;
+//       callback(error);
+//     }
+//   },
+// };
 
 server.use(cors(corsOptions));
 server.use(express.json());
 server.use(express.static(publicDirectory));
 
-//
 // * ENDPOINTS ****************************************************************//
-server.use("/register", registerRouter);
+
+server.use("/business", usersRouter);
 
 // * ERROR MIDDLEWARES ******************************************************//
 server.use(unAuthorizedHandler);
@@ -72,7 +64,6 @@ server.listen(PORT, async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
->>>>>>> Stashed changes
 
     console.log(`✅ Server is running on port :  ${PORT} and connected to DB`);
   } catch (error) {}

@@ -17,7 +17,7 @@ import {
   notFoundErrHandler,
 } from "./errorHandlers.js";
 
-import usersRouter from "./services/usersRouter.js";
+import usersRouter from "./services/usersRouter/usersRouter.js";
 
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -28,25 +28,13 @@ const __dirname = dirname(__filename);
 
 const { PORT, MONGODB_CONNECT } = process.env;
 
-// const whiteList = ["http://localhost:4000"];
-// const corsOptions = {
-//   origin: (origin, callback) => {
-//     if (whiteList.some((allowedUrl) => allowedUrl === origin)) {
-//       callback(null, true);
-//     } else {
-//       const error = new Error("Not allowed by cors!");
-//       error.status = 403;
-//       callback(error);
-//     }
-//   },
-// };
+// const whiteList = ["http://localhost:4444"];
 
-server.use(cors(corsOptions));
+server.use(cors());
 server.use(express.json());
-server.use(express.static(publicDirectory));
 
 // * ENDPOINTS ****************************************************************//
-
+// server.use("/");
 server.use("/business", usersRouter);
 
 // * ERROR MIDDLEWARES ******************************************************//
@@ -73,10 +61,16 @@ server.on("error", (error) =>
   console.log(`❌ Server is not running due to : ${error}`)
 );
 
-// mongoose.connect(process.env.MONGODB_CONNECT).then(() => {
-//   console.log("SUCCESS: connected to MONGODB");
+// mongoose.connect(process.env.MONGODB_CONNECT);
+
+// mongoose.connection.on("connected", () => {
+//   console.log("Successfully connected to Mongo!");
 //   server.listen(PORT, () => {
-//     listEndpoints(app);
-//     console.log("SERVER listening on: " + PORT);
+//     console.table(listEndpoints(server));
+//     console.log(`Server running on port ${PORT}`);
 //   });
+// });
+
+// mongoose.connection.on("error", (err) => {
+//   console.log(err);
 // });

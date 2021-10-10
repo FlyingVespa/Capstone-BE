@@ -2,7 +2,7 @@ import express from "express";
 import { nanoid } from "nanoid";
 import createError from "http-errors";
 
-import userSchema from "./usersSchema";
+import usersSchema from "./usersSchema.js";
 
 const usersRouter = express.Router();
 
@@ -24,15 +24,14 @@ usersRouter.get("/:userId", async (req, res, next) => {
 
 usersRouter.post("/", async (req, res, next) => {
   try {
-    const newUser = new userSchema(req.body);
-    const { _id } = await newUser.save();
+    const newUser = new usersSchema(req.body); // here happens validation of the req.body, if it is not ok Mongoose will throw a "ValidationError"
+    const { _id } = await newUser.save(); // this is where the interaction with the db/collection happens
 
     res.status(201).send({ _id });
   } catch (error) {
     next(error);
   }
 });
-
 // 4. UPDATE SINGLE
 
 usersRouter.put("/:userId", (req, res, next) => {

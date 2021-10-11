@@ -2,12 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import listEndpoints from "express-list-endpoints";
-
-const server = express();
-
-server.use(cors());
-server.use(express.json());
-console.log(listEndpoints(server));
+import bodyParser from "body-parser";
 
 import {
   unAuthorizedHandler,
@@ -18,24 +13,23 @@ import {
 } from "./errorHandlers.js";
 
 import usersRouter from "./services/usersRouter/usersRouter.js";
-
+import pdfRouter from "./services/pdfRouter/pdfRouter";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-// const publicDirectory = path.join(__dirname, "../public");
-
 const { PORT, MONGODB_CONNECT } = process.env;
-
-// const whiteList = ["http://localhost:4444"];
+const server = express();
 
 server.use(cors());
 server.use(express.json());
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.json());
+console.log(listEndpoints(server));
 
 // * ENDPOINTS ****************************************************************//
 // server.use("/");
 server.use("/business", usersRouter);
+server.use("/business", pdfRouter);
 
 // * ERROR MIDDLEWARES ******************************************************//
 server.use(unAuthorizedHandler);
@@ -61,16 +55,6 @@ server.on("error", (error) =>
   console.log(`❌ Server is not running due to : ${error}`)
 );
 
-// mongoose.connect(process.env.MONGODB_CONNECT);
-
-// mongoose.connection.on("connected", () => {
-//   console.log("Successfully connected to Mongo!");
-//   server.listen(PORT, () => {
-//     console.table(listEndpoints(server));
-//     console.log(`Server running on port ${PORT}`);
-//   });
-// });
-
-// mongoose.connection.on("error", (err) => {
-//   console.log(err);
-// });
+// POST
+server.use;
+// GET

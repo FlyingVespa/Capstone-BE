@@ -4,13 +4,12 @@ const { Schema, model } = mongoose;
 
 const usersSchema = new Schema({
   basic: {
-    name: { type: String, required: true },
-    category: { type: String },
-    email: { type: String },
-    shipping: { type: Boolean },
-    password: { type: String },
-    username: { type: String },
-    services: [String],
+    name: { type: String, required: false },
+    category: { type: String, required: false },
+    email: { type: String, required: false },
+    shipping: { type: Boolean, required: false },
+    password: { type: String, required: false },
+    username: { type: String, required: false },
   },
   contact: {
     email: { type: String, required: false },
@@ -26,7 +25,7 @@ const usersSchema = new Schema({
     city: { type: String, required: false },
     zip: { type: String, required: false },
     street: { type: String, required: false },
-    street_numbebr: { type: String, required: false },
+    street_no: { type: Number, required: false },
   },
 
   times: {
@@ -70,6 +69,13 @@ const usersSchema = new Schema({
       open: { type: String },
       closed: { type: String },
     },
+  },
+  info: {
+    services: [String],
+    bio: { type: String },
+    img_logo: { type: String },
+    img_banner: { type: String },
+    img_user: { type: String },
   },
 });
 

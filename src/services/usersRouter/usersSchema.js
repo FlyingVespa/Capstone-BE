@@ -20,6 +20,14 @@ const usersSchema = new Schema({
     whatsapp: { type: String, required: false },
     twitter: { type: String, required: false },
   },
+  location: {
+    country: { type: String, required: false },
+    region: { type: String, required: false },
+    city: { type: String, required: false },
+    zip: { type: String, required: false },
+    street: { type: String, required: false },
+    street_numbebr: { type: String, required: false },
+  },
 
   times: {
     monday: {

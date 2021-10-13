@@ -3,6 +3,13 @@ import cors from "cors";
 import mongoose from "mongoose";
 import listEndpoints from "express-list-endpoints";
 import bodyParser from "body-parser";
+import crypto from "crypto";
+import path from "path";
+import multer from "multer";
+import GridFsStorage from "multer-gridfs-storage";
+import GridFS from "gridfs-stream";
+import methodOveride from "method-override";
+import { fileURLToPath } from "url";
 
 import {
   unAuthorizedHandler,
@@ -14,14 +21,13 @@ import {
 
 import usersRouter from "./services/usersRouter/usersRouter.js";
 // import pdfRouter from "./services/pdfRouter/pdfRouter";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
 
 const { PORT, MONGODB_CONNECT } = process.env;
 const server = express();
 
 server.use(cors());
 server.use(express.json());
+// server.use.apply(methodOveride("_method"));
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 console.log(listEndpoints(server));

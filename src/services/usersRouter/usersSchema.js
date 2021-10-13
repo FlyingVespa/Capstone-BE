@@ -3,6 +3,11 @@ import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
 const usersSchema = new Schema({
+  customUrl: {
+    type: String,
+    required: [false, "Website url required"],
+    unique: true,
+  },
   basic: {
     name: { type: String, required: false },
     category: { type: String, required: false },
@@ -73,10 +78,18 @@ const usersSchema = new Schema({
   info: {
     services: [String],
     bio: { type: String },
-    img_logo: { type: String },
-    img_banner: { type: String },
-    img_user: { type: String },
+    img_logo: { type: String, default: "placeholder.jpg" },
+    img_banner: { type: String, default: "placeholder.jpg" },
+    img_user: { type: String, default: "placeholder.jpg" },
   },
 });
+
+// usersSchema.pre("validate", function (next) {
+//   if (this.description) {
+//     this.description = htmlPurify.sanitize(this.description);
+//     this.snippet = stripHtml(this.description.substring(0, 200)).result;
+//   }
+//   next();
+// });
 
 export default model("User", usersSchema);

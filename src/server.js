@@ -13,7 +13,7 @@ import {
 } from "./errorHandlers.js";
 
 import usersRouter from "./services/usersRouter/usersRouter.js";
-import pdfRouter from "./services/pdfRouter/pdfRouter";
+// import pdfRouter from "./services/pdfRouter/pdfRouter";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -29,7 +29,7 @@ console.log(listEndpoints(server));
 // * ENDPOINTS ****************************************************************//
 // server.use("/");
 server.use("/business", usersRouter);
-server.use("/business", pdfRouter);
+// server.use("/business", pdfRouter);
 
 // * ERROR MIDDLEWARES ******************************************************//
 server.use(unAuthorizedHandler);

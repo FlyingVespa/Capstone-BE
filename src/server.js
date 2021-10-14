@@ -2,12 +2,14 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import listEndpoints from "express-list-endpoints";
-
-const server = express();
-
-server.use(cors());
-server.use(express.json());
-console.log(listEndpoints(server));
+import bodyParser from "body-parser";
+import crypto from "crypto";
+import path from "path";
+import multer from "multer";
+import GridFsStorage from "multer-gridfs-storage";
+import GridFS from "gridfs-stream";
+import methodOveride from "method-override";
+import { fileURLToPath } from "url";
 
 import {
   unAuthorizedHandler,
@@ -17,37 +19,23 @@ import {
   notFoundErrHandler,
 } from "./errorHandlers.js";
 
-import usersRouter from "./services/usersRouter.js";
-
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-// const publicDirectory = path.join(__dirname, "../public");
+import usersRouter from "./services/usersRouter/usersRouter.js";
+// import pdfRouter from "./services/pdfRouter/pdfRouter";
 
 const { PORT, MONGODB_CONNECT } = process.env;
+const server = express();
 
-// const whiteList = ["http://localhost:4000"];
-// const corsOptions = {
-//   origin: (origin, callback) => {
-//     if (whiteList.some((allowedUrl) => allowedUrl === origin)) {
-//       callback(null, true);
-//     } else {
-//       const error = new Error("Not allowed by cors!");
-//       error.status = 403;
-//       callback(error);
-//     }
-//   },
-// };
-
-server.use(cors(corsOptions));
+server.use(cors());
 server.use(express.json());
-server.use(express.static(publicDirectory));
+// server.use.apply(methodOveride("_method"));
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.json());
+console.log(listEndpoints(server));
 
 // * ENDPOINTS ****************************************************************//
-
+// server.use("/");
 server.use("/business", usersRouter);
+// server.use("/business", pdfRouter);
 
 // * ERROR MIDDLEWARES ******************************************************//
 server.use(unAuthorizedHandler);
@@ -73,10 +61,6 @@ server.on("error", (error) =>
   console.log(`❌ Server is not running due to : ${error}`)
 );
 
-// mongoose.connect(process.env.MONGODB_CONNECT).then(() => {
-//   console.log("SUCCESS: connected to MONGODB");
-//   server.listen(PORT, () => {
-//     listEndpoints(app);
-//     console.log("SERVER listening on: " + PORT);
-//   });
-// });
+// POST
+server.use;
+// GET

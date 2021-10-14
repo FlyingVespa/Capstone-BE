@@ -3,18 +3,18 @@ import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
 const usersSchema = new Schema({
-  customUrl: {
-    type: String,
-    required: [false, "Website url required"],
-    unique: true,
-  },
   basic: {
     name: { type: String, required: false },
     category: { type: String, required: false },
     email: { type: String, required: false },
+    // pattern:{ value: /^[a-z0-9._%+-]+\.[a-z]{2,4}$/,
+    // message:"Please enter valid email"}
     shipping: { type: Boolean, required: false },
     password: { type: String, required: false },
     username: { type: String, required: false },
+    url: {
+      type: String,
+    },
   },
   contact: {
     email: { type: String, required: false },

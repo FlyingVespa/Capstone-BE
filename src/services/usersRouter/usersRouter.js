@@ -1,26 +1,29 @@
 import express from "express";
 import { nanoid } from "nanoid";
 import createError from "http-errors";
-
+import { basicAuthMiddleware } from "../../auth/auth.js";
 import usersSchema from "./usersSchema.js";
 
 const usersRouter = express.Router();
 
 // 1. GET ALL
 
-usersRouter.get("/", async (req, res, next) => {
+usersRouter.get("/", basicAuthMiddleware, async (req, res, next) => {
   try {
     const users = await usersSchema.find();
     res.send(users);
-  } catch (error) {}
+  } catch (error) {
+    next();
+  }
 });
 
-// 2. GET SINGLE
+// 2. GET SINGLE No AUTH
 
 usersRouter.get("/:userId", async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const user = await usersSchema.findById(userId);
+    const user = await usersSchema.find(userId);
+
     if (user) {
       res.send(user);
     } else {
@@ -31,8 +34,17 @@ usersRouter.get("/:userId", async (req, res, next) => {
   }
 });
 
-// 3. CREATE NEW USER ************************************************//
-usersRouter.post("/", async (req, res, next) => {
+// 3. GET LOGGEDIN USER
+usersRouter.get("/me", basicAuthMiddleware, async (req, res, next) => {
+  try {
+    res.send(user);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 4. CREATE NEW USER ************************************************//
+usersRouter.post("/register", async (req, res, next) => {
   try {
     const newUser = new usersSchema(req.body);
     const { _id } = await newUser.save();
@@ -45,7 +57,7 @@ usersRouter.post("/", async (req, res, next) => {
   }
 });
 
-// 4. UPDATE SINGLE
+// 5. UPDATE SINGLE
 
 usersRouter.put("/:userId", async (req, res, next) => {
   try {
@@ -61,7 +73,7 @@ usersRouter.put("/:userId", async (req, res, next) => {
   } catch (error) {}
 });
 
-// 5. DELETE SINGLE
+// 6. DELETE SINGLE
 usersRouter.delete("/:userId", async (req, res, next) => {
   try {
     const userId = req.params.userId;

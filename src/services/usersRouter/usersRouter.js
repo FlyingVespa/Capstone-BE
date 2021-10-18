@@ -1,16 +1,24 @@
 import express from "express";
 import { nanoid } from "nanoid";
 import createError from "http-errors";
-import { basicAuthMiddleware } from "../../auth/auth.js";
-import userSchema from "./usersSchema.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+// import userSchema from "./usersSchema.js";
+import {
+  basicAuthMiddleware,
+  JWTAuthMiddleware,
+} from "../../auth/middlewares.js";
+import { adminOnly } from "../../auth/admin.js";
+import { JWTAuthenticate, refreshTokens } from "../../auth/tools.js";
+import User from "./usersSchema.js";
 
 const usersRouter = express.Router();
 
 // 1. GET ALL
 
-usersRouter.get("/", basicAuthMiddleware, async (req, res, next) => {
+usersRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
   try {
-    const users = await userSchema.find();
+    const users = await User.find();
     res.send(users);
   } catch (error) {
     next();
@@ -19,10 +27,10 @@ usersRouter.get("/", basicAuthMiddleware, async (req, res, next) => {
 
 // 2. GET SINGLE No AUTH
 
-usersRouter.get("/:userId", basicAuthMiddleware, async (req, res, next) => {
+usersRouter.get("/:userId", async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const user = await userSchema.findById(userId);
+    const user = await User.findById(userId);
 
     if (user) {
       res.send(user);
@@ -34,21 +42,22 @@ usersRouter.get("/:userId", basicAuthMiddleware, async (req, res, next) => {
   }
 });
 
-// 3. GET LOGGEDIN USER
-// usersRouter.get("/me", basicAuthMiddleware, async (req, res, next) => {
-//   try {
-//     res.send(user);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
 // 4. CREATE NEW USER ************************************************//
 usersRouter.post("/register", async (req, res, next) => {
   try {
-    const newUser = new userSchema(req.body);
-    const { _id } = await newUser.save();
-    res.status(201).send({ _id });
+    User.findOne({ email: req.body.email }).then((user) => {
+      if (user) {
+        return res.status(400).json({
+          email: "Email already registered, continue to login",
+        });
+      } else {
+        const newUser = new User(req.body);
+        const { _id } = newUser.save();
+        return res.status(201).json({ msg: newUser });
+      }
+    });
+    // const newUser = new User(req.body);
+    // const { _id } = await newUser.save();
   } catch (error) {
     if (error.name === "validationError") {
       next(createError(400, error));
@@ -62,7 +71,7 @@ usersRouter.post("/register", async (req, res, next) => {
 usersRouter.put("/:userId", async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const modifiedUser = await userSchema.findByIdAndUpdate(userId, req.body, {
+    const modifiedUser = await User.findByIdAndUpdate(userId, req.body, {
       new: true,
     });
     if (modifiedUser) {
@@ -77,15 +86,47 @@ usersRouter.put("/:userId", async (req, res, next) => {
 usersRouter.delete("/:userId", async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const deleteUser = await userSchema.findByIdAndDelete(userId);
+    const deleteUser = await User.findByIdAndDelete(userId);
     if (deleteUser) {
       res.status(204).send();
     } else {
-      throw createError(404, `User wit id ${userId} not found`);
+      throw createError(404, `User with id ${userId} not found`);
     }
   } catch (error) {
     next(error);
   }
 });
 
+usersRouter.post("/login", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    // 1. verify credentials
+    const user = await UserModel.checkCredentials(email, password);
+
+    if (user) {
+      // 2. Generate tokens if credentials are ok
+      const { accessToken, refreshToken } = await JWTAuthenticate(user);
+      // 3. Send tokens back as a response
+      res.send({ accessToken, refreshToken });
+    } else {
+      next(createError(401, "Credentials not valid!"));
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+usersRouter.post("/refreshToken", async (req, res, next) => {
+  try {
+    const { actualRefreshToken } = req.body;
+
+    // 1. Check the validity (and the integrity) of the refresh token, if everything is ok we can create a new pair of access and refresh token
+    const { accessToken, refreshToken } = await refreshTokens(
+      actualRefreshToken
+    );
+    res.send({ accessToken, refreshToken });
+  } catch (error) {
+    next(error);
+  }
+});
 export default usersRouter;

@@ -5,8 +5,14 @@ const { Schema, model } = mongoose;
 
 const userSchema = new Schema({
   password: { type: String, required: true },
-  email: { type: String, required: true },
-  url: { type: String, required: true },
+  email: {
+    type: String,
+    lowercase: true,
+    required: [true, "An email is required."],
+    unique: [true, "An email is already registered."],
+    match: [/.+\@.+\..+/, "Not a valid email"],
+  },
+  url: { type: String, required: true, unique: true },
   basic: {
     name: { type: String, required: true },
     category: { type: String, required: false },
@@ -79,6 +85,7 @@ const userSchema = new Schema({
     img_banner: { type: String, default: "placeholder.jpg" },
     img_user: { type: String, default: "placeholder.jpg" },
   },
+  products: { type: Schema.Types.ObjectId, ref: "Product" },
 });
 
 userSchema.pre("save", async function (next) {

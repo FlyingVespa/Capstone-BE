@@ -3,14 +3,14 @@ import bcrypt from "bcrypt";
 
 const { Schema, model } = mongoose;
 
-const usersSchema = new Schema({
-  password: { type: String, required: false },
-  email: { type: String, required: false },
-  url: { type: String, required: false },
+const userSchema = new Schema({
+  password: { type: String, required: true },
+  email: { type: String, required: true },
+  url: { type: String, required: true },
   basic: {
-    name: { type: String, required: false },
+    name: { type: String, required: true },
     category: { type: String, required: false },
-    username: { type: String, required: false },
+    username: { type: String, required: true },
   },
   contact: {
     emails: { type: String, required: false },
@@ -81,7 +81,7 @@ const usersSchema = new Schema({
   },
 });
 
-usersSchema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   const newUser = this;
   const plainPW = newUser.password;
   if (newUser.isModified("password")) {
@@ -90,15 +90,16 @@ usersSchema.pre("save", async function (next) {
   next();
 });
 
-usersSchema.methods.toJSON = function () {
+userSchema.methods.toJSON = function () {
   const userDocument = this;
   const userObject = userDocument.toObject();
   delete userObject.password;
   delete userObject.__v;
+
   return userObject;
 };
 
-usersSchema.statics.checkCredentials = async function (email, plainPW) {
+userSchema.statics.checkCredentials = async function (email, plainPW) {
   const user = await this.findOne({ email });
   if (user) {
     const isMatch = await bcrypt.compare(plainPW, user.password);
@@ -110,4 +111,4 @@ usersSchema.statics.checkCredentials = async function (email, plainPW) {
   }
 };
 
-export default model("User", usersSchema);
+export default model("User", userSchema);

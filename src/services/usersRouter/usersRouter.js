@@ -2,7 +2,7 @@ import express from "express";
 import { nanoid } from "nanoid";
 import createError from "http-errors";
 import { basicAuthMiddleware } from "../../auth/auth.js";
-import usersSchema from "./usersSchema.js";
+import userSchema from "./usersSchema.js";
 
 const usersRouter = express.Router();
 
@@ -10,7 +10,7 @@ const usersRouter = express.Router();
 
 usersRouter.get("/", basicAuthMiddleware, async (req, res, next) => {
   try {
-    const users = await usersSchema.find();
+    const users = await userSchema.find();
     res.send(users);
   } catch (error) {
     next();
@@ -19,10 +19,10 @@ usersRouter.get("/", basicAuthMiddleware, async (req, res, next) => {
 
 // 2. GET SINGLE No AUTH
 
-usersRouter.get("/:userId", async (req, res, next) => {
+usersRouter.get("/:userId", basicAuthMiddleware, async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const user = await usersSchema.find(userId);
+    const user = await userSchema.findById(userId);
 
     if (user) {
       res.send(user);
@@ -35,18 +35,18 @@ usersRouter.get("/:userId", async (req, res, next) => {
 });
 
 // 3. GET LOGGEDIN USER
-usersRouter.get("/me", basicAuthMiddleware, async (req, res, next) => {
-  try {
-    res.send(user);
-  } catch (error) {
-    next(error);
-  }
-});
+// usersRouter.get("/me", basicAuthMiddleware, async (req, res, next) => {
+//   try {
+//     res.send(user);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 // 4. CREATE NEW USER ************************************************//
 usersRouter.post("/register", async (req, res, next) => {
   try {
-    const newUser = new usersSchema(req.body);
+    const newUser = new userSchema(req.body);
     const { _id } = await newUser.save();
     res.status(201).send({ _id });
   } catch (error) {
@@ -62,7 +62,7 @@ usersRouter.post("/register", async (req, res, next) => {
 usersRouter.put("/:userId", async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const modifiedUser = await usersSchema.findByIdAndUpdate(userId, req.body, {
+    const modifiedUser = await userSchema.findByIdAndUpdate(userId, req.body, {
       new: true,
     });
     if (modifiedUser) {
@@ -77,7 +77,7 @@ usersRouter.put("/:userId", async (req, res, next) => {
 usersRouter.delete("/:userId", async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const deleteUser = await usersSchema.findByIdAndDelete(userId);
+    const deleteUser = await userSchema.findByIdAndDelete(userId);
     if (deleteUser) {
       res.status(204).send();
     } else {

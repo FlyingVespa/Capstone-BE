@@ -1,6 +1,7 @@
 import createError from "http-errors";
+
 import atob from "atob";
-import usersSchema from "../services/usersRouter/usersSchema.js";
+import userSchema from "../services/usersRouter/usersSchema.js";
 
 export const basicAuthMiddleware = async (REQ, RES, NEXT) => {
   console.log(REQ.headers);
@@ -11,7 +12,7 @@ export const basicAuthMiddleware = async (REQ, RES, NEXT) => {
     console.log(decoded);
 
     const [email, password] = decoded.split(":");
-    const user = await usersSchema.checkcredentials(email, password);
+    const user = await userSchema.checkcredentials(email, password);
     if (user) {
       REQ.user = user;
       NEXT();

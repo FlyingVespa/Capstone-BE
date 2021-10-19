@@ -25,7 +25,15 @@ import usersRouter from "./services/usersRouter/usersRouter.js";
 const { PORT, MONGODB_CONNECT } = process.env;
 const server = express();
 
+// server.use(
+//   cors({
+//     origin: "*",
+//     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+//   })
+// );
+
 server.use(cors());
+
 server.use(express.json());
 // server.use.apply(methodOveride("_method"));
 server.use(bodyParser.urlencoded({ extended: true }));

@@ -1,11 +1,10 @@
 import createError from "http-errors";
 import atob from "atob";
 
-import userSchema from "../services/usersRouter/usersSchema.js";
+import User from "../services/usersRouter/usersSchema.js";
 import { verifyJWT } from "./tools.js";
 
 export const JWTAuthMiddleware = async (req, res, next) => {
-  // 1. Check if Authorization header is received, if it is not --> trigger an error (401)
   console.log(req.headers);
   if (!req.headers.authorization) {
     next(
@@ -18,10 +17,11 @@ export const JWTAuthMiddleware = async (req, res, next) => {
     try {
       const token = req.headers.authorization.replace("Bearer ", "");
       const decodedToken = await verifyJWT(token);
-      const user = await userSchema.findById(decodedToken._id);
+      const user = await User.findById(decodedToken._id);
 
       if (user) {
         req.user = user;
+        console.log("INFO: user has been set on request [req.user={}]", user);
         next();
       } else {
         next(createError(404, "User not found!"));
@@ -45,10 +45,8 @@ export const basicAuthMiddleware = async (req, res, next) => {
   } else {
     const decoded = atob(req.headers.authorization.split(" ")[1]);
     console.log(decoded);
-
     const [email, password] = decoded.split(":");
-
-    const user = await userSchema.checkCredentials(email, password);
+    const user = await User.checkCredentials(email, password);
     if (user) {
       next();
     } else {

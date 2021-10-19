@@ -102,7 +102,7 @@ userSchema.methods.toJSON = function () {
   const userObject = userDocument.toObject();
   delete userObject.password;
   delete userObject.__v;
-
+  delete userObject.refreshToken;
   return userObject;
 };
 
@@ -110,11 +110,10 @@ userSchema.statics.checkCredentials = async function (email, plainPW) {
   const user = await this.findOne({ email });
   if (user) {
     const isMatch = await bcrypt.compare(plainPW, user.password);
-
     if (isMatch) return user;
     else return null;
   } else {
-    next();
+    return null;
   }
 };
 

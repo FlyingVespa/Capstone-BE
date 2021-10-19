@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
-import { promisify } from "util";
 
 import userSchema from "../services/usersRouter/usersSchema.js";
+
+const EXPIRE_10_MINUTES = "900000"; // x amount of mineuts or seconds
 
 export const JWTAuthenticate = async (user) => {
   const accessToken = await generateJWT({ _id: user._id });
@@ -16,7 +17,7 @@ const generateJWT = (payload) =>
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: "1 week" },
+      { expiresIn: EXPIRE_10_MINUTES },
       (err, token) => {
         if (err) reject(err);
         resolve(token);
@@ -29,7 +30,7 @@ const generateRefreshJWT = (payload) =>
     jwt.sign(
       payload,
       process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "1 week" },
+      { expiresIn: EXPIRE_10_MINUTES },
       (err, token) => {
         if (err) reject(err);
         resolve(token);

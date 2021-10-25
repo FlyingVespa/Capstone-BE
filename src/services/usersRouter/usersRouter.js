@@ -23,7 +23,7 @@ import User from "./usersSchema.js";
 const usersRouter = express.Router();
 
 // 1. GET ALL **************************************************************************************/
-usersRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
+usersRouter.get("/", async (req, res, next) => {
   try {
     const users = await User.find();
     res.send(users);
@@ -32,11 +32,19 @@ usersRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
   }
 });
 
-// 2. GET SINGLE No AUTH **************************************************************************************/
+// 2. GET SINGLE with Auth **************************************************************************************/
 usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
   try {
     console.log(`INFO: [user=${req.user}]`);
 
+    res.send(req.user);
+  } catch (error) {
+    next(error);
+  }
+});
+// 2. GET SINGLE with Auth **************************************************************************************/
+usersRouter.get("/:userID", async (req, res, next) => {
+  try {
     res.send(req.user);
   } catch (error) {
     next(error);
@@ -128,8 +136,10 @@ usersRouter.post("/login", async (req, res, next) => {
 // 8. LOUGOUT SINGLE **************************************************************************************/
 usersRouter.post("/logout", JWTAuthMiddleware, async (req, res, next) => {
   try {
-    req.user.refreshToken = null;
-    await req.user.save();
+    // req.user.refreshToken = null;
+    res.cookie("jwt", " ", "{maxAge:1}");
+    // await req.user.save();
+    res.redirect("/business");
 
     res.send();
   } catch (error) {
@@ -159,7 +169,6 @@ usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
 usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
   try {
     await User.findByIdAndDelete(req.user._id);
-
     await req.user.deleteOne();
     res.status(204).send();
   } catch (error) {

@@ -11,6 +11,7 @@ const userSchema = new Schema({
     required: [true, "An email is required."],
     unique: [true, "An email is already registered."],
     match: [/.+\@.+\..+/, "Not a valid email"],
+    // validate: [isEmail, "Please enter valid email"],
   },
   url: { type: String, required: true, unique: true },
   basic: {

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { request } from "express";
 import { nanoid } from "nanoid";
 import createError from "http-errors";
 
@@ -36,7 +36,6 @@ usersRouter.get("/", async (req, res, next) => {
 usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
   try {
     console.log(`INFO: [user=${req.user}]`);
-
     res.send(req.user);
   } catch (error) {
     next(error);
@@ -98,11 +97,16 @@ usersRouter.put("/me", JWTAuthMiddleware, async (req, res, next) => {
 });
 
 // 5. DELETE SINGLE **************************************************************************************/
-// usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
-//   try {
-//     await req.user.deleteOne();
-//   } catch (error) {}
-// });
+
+usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
+  try {
+    await User.findByIdAndDelete(req.user._id);
+    await req.user.deleteOne();
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+});
 
 // 6. REFRESH TOKEN **************************************************************************************/
 usersRouter.post("/refreshToken", async (req, res, next) => {
@@ -134,14 +138,11 @@ usersRouter.post("/login", async (req, res, next) => {
 });
 
 // 8. LOUGOUT SINGLE **************************************************************************************/
-usersRouter.post("/logout", JWTAuthMiddleware, async (req, res, next) => {
+usersRouter.get("/logout", JWTAuthMiddleware, async (req, res, next) => {
   try {
-    // req.user.refreshToken = null;
-    res.cookie("jwt", " ", "{maxAge:1}");
-    // await req.user.save();
-    res.redirect("/business");
-
-    res.send();
+    req.session.destroy();
+    res.clearCookie("context", { httpOnly: true });
+    res.redirect(301,"/login")
   } catch (error) {
     next(error);
   }
@@ -155,25 +156,6 @@ usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
   }
 });
 
-// usersRouter.put("/me", JWTAuthMiddleware, async (req, res, next) => {
-//   try {
-//     req.user.name = "Whatever"; // modify req.user with the fields coming from req.body
-//     await req.user.save();
 
-//     res.send();
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
-  try {
-    await User.findByIdAndDelete(req.user._id);
-    await req.user.deleteOne();
-    res.status(204).send();
-  } catch (error) {
-    next(error);
-  }
-});
 
 export default usersRouter;

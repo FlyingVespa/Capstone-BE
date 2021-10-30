@@ -1,14 +1,13 @@
 import jwt from "jsonwebtoken";
-
-import userSchema from "../services/usersRouter/usersSchema.js";
-
-const EXPIRE_10_MINUTES = "900000"; // x amount of mineuts or seconds
+import userSchema from "../services/users/usersSchema.js";
+const EXPIRE_10_MINUTES = "900000"; 
 
 export const JWTAuthenticate = async (user) => {
+
   const accessToken = await generateJWT({ _id: user._id });
   const refreshToken = await generateRefreshJWT({ _id: user._id });
   user.refreshToken = refreshToken;
-  await user.save();
+  await  user.save(function(){})
   return { accessToken, refreshToken };
 };
 

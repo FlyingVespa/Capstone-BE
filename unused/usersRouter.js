@@ -1,15 +1,7 @@
 import express, { request } from "express";
-import { nanoid } from "nanoid";
 import createError from "http-errors";
-
-// import userSchema from "./usersSchema.js";
-import {
-  basicAuthMiddleware,
-  JWTAuthMiddleware,
-} from "../../auth/middlewares.js";
-import { adminOnly } from "../../auth/admin.js";
-import { JWTAuthenticate, refreshTokens } from "../../auth/tools.js";
-import User from "./usersSchema.js";
+import { JWTAuthenticate, refreshTokens } from "../src/auth/tools.js";
+import User from "../src/services/users/usersSchema.js";
 
 // 1. GET all
 // 2. GET Single
@@ -158,4 +150,4 @@ usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
 
 
 
-export default usersRouter;
+// export default usersRouter;

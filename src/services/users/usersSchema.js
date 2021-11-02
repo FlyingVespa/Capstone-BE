@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 
 const { Schema, model } = mongoose;
 
-const reqString = { type: String, required: true };
+const reqString = { type: String, required: false };
 const notReqString = { type: String, required: false };
 const reqBoolean = { type: Boolean };
 

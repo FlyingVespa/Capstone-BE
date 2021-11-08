@@ -8,6 +8,7 @@ const notReqString = { type: String, required: false };
 const reqBoolean = { type: Boolean };
 
 const userSchema = new Schema({
+  role: business,
   password: reqString,
   businessname: reqString,
   category: notReqString,

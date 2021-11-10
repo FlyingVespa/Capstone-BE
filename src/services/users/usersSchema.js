@@ -8,7 +8,7 @@ const notReqString = { type: String, required: false };
 const reqBoolean = { type: Boolean };
 
 const userSchema = new Schema({
-  role: business,
+  role: notReqString,
   password: reqString,
   businessname: reqString,
   category: notReqString,
@@ -83,23 +83,24 @@ const userSchema = new Schema({
   shipping: reqBoolean,
   img_logo: {
     ...reqString,
-    default: function () {
+    default: () => {
       return `https://eu.ui-avatars.com/api/?name=${this.businessname}`;
     },
   },
   img_banner: {
     ...reqString,
-    default: function () {
+    default: () => {
       return `https://www.placecage.com/1800/400`;
     },
   },
 
   img_user: {
     ...reqString,
-    default: function () {
+    default: () => {
       return ` https://www.stevensegallery.com/200/300`;
     },
   },
+
   products: { type: Schema.Types.ObjectId, ref: "Product" },
 });
 

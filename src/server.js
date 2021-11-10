@@ -14,6 +14,8 @@ import {
 } from "./errorHandlers.js";
 
 import usersRouter from "./services/users/users.js";
+import clientsRouter from "./services/customers/clients.js";
+import loginRouter from "./services/login/login.js";
 
 
 
@@ -47,6 +49,9 @@ server.use(bodyParser.json());
 // * ENDPOINTS ****************************************************************//
 
 server.use("/business", usersRouter);
+server.use("/profile", clientsRouter);
+server.use("/login", loginRouter);
+// server.use("register", registerRouter)
 // server.use("/business", filesRouter)
 ;
 

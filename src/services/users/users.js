@@ -1,5 +1,5 @@
 import express from "express";
-import { JWTAuthenticate, refreshTokens } from "../../auth/tools.js";
+import {JWTAuthenticate} from "../../middlewares/login.js"
 import * as Controllers from "../../controllers/users.js";
 import { usersImgParser } from "../../settings/cloudinary.js";
 

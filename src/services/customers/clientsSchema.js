@@ -7,18 +7,18 @@ const reqString = { type: String, required: false };
 const notReqString = { type: String, required: false };
 
 const clientSchema = new Schema({
-  role: "client",
-  password: reqString,
-  firstname: reqString,
-  lastname: reqString,
-  username: reqString,
+  role: notReqString,
+  password: notReqString,
+  firstname: notReqString,
+  lastname: notReqString,
+  username: notReqString,
   email: {
     type: String,
     lowercase: true,
     required: [true, "An email is required."],
     unique: [true, "An email is already registered."],
     match: [/.+\@.+\..+/, "Not a valid email"],
-    // validate: [isEmail, "Please enter valid email"],
+
   },
   address: notReqString,
   fav_stores: notReqString,

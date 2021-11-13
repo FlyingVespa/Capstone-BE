@@ -1,13 +1,12 @@
 import express from 'express';
-import loginUser from "../../controllers/login.js"
-import JWTAuthenticate from "../middlewares/login.js"
-
+import * as Controllers from "../../controllers/login.control.js"
+import {JWTAuthenticate, VerifyUserType} from "../../middlewares/login.middleware.js"
 const loginRouter = express.Router();
 
 
 loginRouter
     .route("/")
-    .post(JWTAuthenticate, Controllers.loginUser)
+    .post(VerifyUserType, Controllers.loginUser)
 
 
 

@@ -18,7 +18,6 @@ const clientSchema = new Schema({
     required: [true, "An email is required."],
     unique: [true, "An email is already registered."],
     match: [/.+\@.+\..+/, "Not a valid email"],
-
   },
   address: notReqString,
   fav_stores: notReqString,
@@ -26,6 +25,12 @@ const clientSchema = new Schema({
   pref_location: notReqString,
   store_search_history: notReqString,
   shopping_list: notReqString,
+  avatar: {
+    ...notReqString,
+    default: () => {
+      return `https://eu.ui-avatars.com/api/?name=${firstname}+${lastname}?color=ff9900`;
+    },
+  },
   //  shopping_cart: notReqString
 });
 

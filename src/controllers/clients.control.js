@@ -1,6 +1,6 @@
 import createError from "http-errors";
 
-import { JWTAuthenticate, refreshTokens } from "../auth/tools.js";
+import {JWTAuthenticate, refreshTokens } from "../middlewares/login.middleware.js"
 import Client from "../services/customers/clientsSchema.js"
 // 1. GET all
 // 2. GET Single
@@ -50,6 +50,7 @@ export const getMe = async (req, res, next) => {
 // 3. CREATE NEW CLIENT **************************************************************************************/
 export const registerClient = async (req, res, next) => {
   try {
+    
     Client.findOne({ email: req.body.email }).then((client) => {
       if (client) {
         return res.status(400).json({

@@ -9,6 +9,8 @@ import clientsSchema from "../services/customers/clientsSchema.js";
 const EXPIRE_10_MINUTES = "900000";
 
 export const JWTAuthenticate = async (user) => {
+
+  
   const accessToken = await generateJWT({ _id: user._id });
   const refreshToken = await generateRefreshJWT({ _id: user._id });
   user.refreshToken = refreshToken;

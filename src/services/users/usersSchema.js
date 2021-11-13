@@ -84,7 +84,7 @@ const userSchema = new Schema({
   img_logo: {
     ...reqString,
     default: () => {
-      return `https://eu.ui-avatars.com/api/?name=${this.businessname}`;
+      return `https://eu.ui-avatars.com/api/?name=${businessname}?color=009900`;
     },
   },
   img_banner: {

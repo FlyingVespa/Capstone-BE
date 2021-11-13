@@ -1,7 +1,7 @@
 import express, { request } from "express";
 import createError from "http-errors";
 
-import { JWTAuthenticate, refreshTokens } from "../auth/tools.js";
+import {JWTAuthenticate, refreshTokens } from "../middlewares/login.middleware.js"
 import User from "../services/users/usersSchema.js"
 // 1. GET all
 // 2. GET Single

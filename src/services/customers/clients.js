@@ -1,13 +1,15 @@
 import express from "express";
-import {JWTAuthenticate} from "../../middlewares/login.js"
-import * as Controllers from "../../controllers/clients.js";
+import {JWTAuthenticate} from "../../middlewares/login.middleware.js"
+import * as Controllers from "../../controllers/clients.control.js";
 import { usersImgParser } from "../../settings/cloudinary.js";
+
+import {isBusiness, isClient} from "../../middlewares/login.middleware.js"
 const clientsRouter = express.Router();
 
 clientsRouter
   .route("/")
 //   .get(Controllers.getAllUsers)
-  .post(Controllers.registerClient);
+  .post(isBusiness, isClient, Controllers.registerClient);
 clientsRouter
   .route("/me")
   .get(JWTAuthenticate, Controllers.getMe)

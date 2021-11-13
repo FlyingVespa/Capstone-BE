@@ -1,6 +1,6 @@
 import express from "express";
-import {JWTAuthenticate} from "../../middlewares/login.js"
-import * as Controllers from "../../controllers/users.js";
+import {JWTAuthenticate} from "../../middlewares/login.middleware.js"
+import * as Controllers from "../../controllers/users.control.js";
 import { usersImgParser } from "../../settings/cloudinary.js";
 
 const usersRouter = express.Router();

@@ -28,7 +28,7 @@ const clientSchema = new Schema({
   avatar: {
     ...notReqString,
     default: () => {
-      return `https://eu.ui-avatars.com/api/?name=${firstname}+${lastname}?color=ff9900`;
+      return `https://eu.ui-avatars.com/api/?name=test`;
     },
   },
   //  shopping_cart: notReqString

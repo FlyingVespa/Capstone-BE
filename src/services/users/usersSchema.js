@@ -82,20 +82,20 @@ const userSchema = new Schema({
   bio: notReqString,
   shipping: reqBoolean,
   img_logo: {
-    ...reqString,
+    ...notReqString,
     default: () => {
-      return `https://eu.ui-avatars.com/api/?name=${businessname}?color=009900`;
+      return `https://eu.ui-avatars.com/api/?name=Test`;
     },
   },
   img_banner: {
-    ...reqString,
+    ...notReqString,
     default: () => {
       return `https://www.placecage.com/1800/400`;
     },
   },
 
   img_user: {
-    ...reqString,
+    ...notReqString,
     default: () => {
       return ` https://www.stevensegallery.com/200/300`;
     },

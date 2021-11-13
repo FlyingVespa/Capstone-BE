@@ -70,6 +70,30 @@ export const registerClient = async (req, res, next) => {
   }
 };
 
+export const regUser = async (req, res, next) => {
+  try {
+    
+    Client.findOne({ email: req.body.email }).then((client) => {
+      if (client) {
+        return res.status(400).json({
+          email: "Email already registered, continue to login",
+        });
+      } else {
+        
+        const newClient = new Client(req.body);
+        const { _id } = newClient.save();
+        return res.status(201).json({ msg: newClient });
+      }
+    });
+  } catch (error) {
+    if (error.name === "validationError") {
+      next(createError(400, error));
+    }
+    next(error);
+  }
+};
+
+
 // 4. UPDATE SINGLE **************************************************************************************/
 
 export const updateClient = async (req, res, next) => {

@@ -16,6 +16,7 @@ import {
 import usersRouter from "./services/users/users.js";
 import clientsRouter from "./services/customers/clients.js";
 import loginRouter from "./services/login/login.js";
+import registerRouter from "./services/register/register.js";
 
 
 
@@ -47,12 +48,11 @@ server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 
 // * ENDPOINTS ****************************************************************//
-
+server.use("/register", registerRouter)
 server.use("/business", usersRouter);
 server.use("/profile", clientsRouter);
 server.use("/login", loginRouter);
-// server.use("register", registerRouter)
-// server.use("/business", filesRouter)
+
 ;
 
 // * ERROR MIDDLEWARES ******************************************************//

@@ -8,8 +8,7 @@ const usersRouter = express.Router();
 usersRouter
   .route("/")
   .get(Controllers.getAllUsers)
-  .post(Controllers.registerUser);
-usersRouter
+ usersRouter
   .route("/me")
   .get(JWTAuthenticate, Controllers.getMe)
   .post(JWTAuthenticate, Controllers.getMe)

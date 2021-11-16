@@ -1,8 +1,11 @@
 import express, { request } from "express";
 import createError from "http-errors";
 
-import {JWTAuthenticate, refreshTokens } from "../middlewares/login.middleware.js"
-import User from "../services/users/usersSchema.js"
+import {
+  JWTAuthenticate,
+  refreshTokens,
+} from "../middlewares/login.middleware.js";
+import User from "../schema/user.schema.js";
 // 1. GET all
 // 2. GET Single
 // 3. POST Create Single
@@ -11,7 +14,6 @@ import User from "../services/users/usersSchema.js"
 // 6. REFRESH Token
 // 7. LOGIN Single
 // 8. LOUGOUT Single
-
 
 // 1. GET ALL **************************************************************************************/
 export const getAllUsers = async (req, res, next) => {
@@ -27,10 +29,10 @@ export const getAllUsers = async (req, res, next) => {
 
 export const getSingleUser = async (req, res, next) => {
   try {
-    const user = await User.findbyId(req.params.userID);
+    const user = await User.findbyId(req.params.userId);
     if (!user) {
       return next(
-        createError(404, `User with ID: ${req.params.userID} not found`)
+        createError(404, `User with ID: ${req.params.userId} not found`)
       );
     }
     res.send(req.user);
@@ -76,7 +78,7 @@ export const updateUser = async (req, res, next) => {
   const update = { ...req.body };
   try {
     const updatedUser = await User.findbyIDandUpdate(
-      req.params.userID,
+      req.params.userId,
       update,
       { new: true, runValidators: true }
     );

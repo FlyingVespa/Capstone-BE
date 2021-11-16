@@ -82,20 +82,20 @@ const userSchema = new Schema({
   bio: notReqString,
   shipping: reqBoolean,
   img_logo: {
-    ...reqString,
+    ...notReqString,
     default: () => {
-      return `https://eu.ui-avatars.com/api/?name=${businessname}?color=009900`;
+      return `https://eu.ui-avatars.com/api/?name=Test`;
     },
   },
   img_banner: {
-    ...reqString,
+    ...notReqString,
     default: () => {
       return `https://www.placecage.com/1800/400`;
     },
   },
 
   img_user: {
-    ...reqString,
+    ...notReqString,
     default: () => {
       return ` https://www.stevensegallery.com/200/300`;
     },
@@ -113,15 +113,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.toJSON = function () {
-  const userDocument = this;
-  const userObject = userDocument.toObject();
-  delete userObject.password;
-  delete userObject.__v;
-  delete userObject.refreshToken;
-  return userObject;
-};
-
 userSchema.statics.checkCredentials = async function (email, plainPW) {
   const user = await this.findOne({ email });
   if (user) {
@@ -131,6 +122,15 @@ userSchema.statics.checkCredentials = async function (email, plainPW) {
   } else {
     return null;
   }
+};
+
+userSchema.methods.toJSON = function () {
+  const userDocument = this;
+  const userObject = userDocument.toObject();
+  delete userObject.password;
+  delete userObject.__v;
+  delete userObject.refreshToken;
+  return userObject;
 };
 
 export default model("User", userSchema);

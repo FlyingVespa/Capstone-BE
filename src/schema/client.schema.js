@@ -28,29 +28,20 @@ const clientSchema = new Schema({
   avatar: {
     ...notReqString,
     default: () => {
-      return `https://eu.ui-avatars.com/api/?name=${firstname}+${lastname}?color=ff9900`;
+      return `https://eu.ui-avatars.com/api/?name=test`;
     },
   },
   //  shopping_cart: notReqString
 });
 
 clientSchema.pre("save", async function (next) {
-  const newUser = this;
-  const plainPW = newUser.password;
-  if (newUser.isModified("password")) {
-    newUser.password = await bcrypt.hash(plainPW, 10);
+  const newClient = this;
+  const plainPW = newClient.password;
+  if (newClient.isModified("password")) {
+    newClient.password = await bcrypt.hash(plainPW, 10);
   }
   next();
 });
-
-clientSchema.methods.toJSON = function () {
-  const userDocument = this;
-  const userObject = userDocument.toObject();
-  delete userObject.password;
-  delete userObject.__v;
-  delete userObject.refreshToken;
-  return userObject;
-};
 
 clientSchema.statics.checkCredentials = async function (email, plainPW) {
   const user = await this.findOne({ email });
@@ -61,6 +52,14 @@ clientSchema.statics.checkCredentials = async function (email, plainPW) {
   } else {
     return null;
   }
+};
+clientSchema.methods.toJSON = function () {
+  const userDocument = this;
+  const userObject = userDocument.toObject();
+  delete userObject.password;
+  delete userObject.__v;
+  delete userObject.refreshToken;
+  return userObject;
 };
 
 export default model("Client", clientSchema);

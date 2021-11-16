@@ -75,10 +75,9 @@ export const addNewProduct = async (req, res, next) => {
 };
 
 //  PUT
-export const editProduct = async (req, res, next) => {
+export const updateProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
-
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
       req.body,

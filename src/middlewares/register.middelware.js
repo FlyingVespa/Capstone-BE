@@ -28,3 +28,16 @@ export const isClient = async (req, res, next) => {
     next(error);
   }
 };
+
+export const urlIsUnique = async (req, res, next) => {
+  try {
+    let business = await User.findOne({ url: req.body.url });
+    if (!business) {
+      next();
+    } else {
+      res.status(400).send("Url already in use, please select a unique one");
+    }
+  } catch (error) {
+    next(error);
+  }
+};

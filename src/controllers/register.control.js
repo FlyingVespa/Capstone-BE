@@ -7,21 +7,19 @@ import createError from "http-errors";
 export const registerAccount = async (req, res, next) => {
   try {
     if (req.body.role === "user") {
-      User.findOne({ email: req.body.email, url: req.body.url }).then(
-        (user) => {
-          if (user) {
-            return res.status(400).json({
-              email:
-                "Email already registered to an USER account, continue to login",
-              url: "Url Already taken, please choose a unique URL",
-            });
-          } else {
-            const newUser = new User(req.body);
-            const { _id } = newUser.save();
-            return res.status(201).json({ msg: newUser });
-          }
+      User.findOne({ email: req.body.email }).then((user) => {
+        if (user) {
+          return res.status(400).json({
+            email:
+              "Email already registered to an USER account, continue to login",
+            url: "Url Already taken, please choose a unique URL",
+          });
+        } else {
+          const newUser = new User(req.body);
+          const { _id } = newUser.save();
+          return res.status(201).json({ msg: newUser });
         }
-      );
+      });
     } else if (req.body.role === "client") {
       Client.findOne({ email: req.body.email }).then((client) => {
         if (client) {

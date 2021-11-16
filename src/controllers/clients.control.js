@@ -28,13 +28,14 @@ export const getAllClients = async (req, res, next) => {
 
 export const getSingleClient = async (req, res, next) => {
   try {
-    const client = await Client.findbyId(req.params.clientId);
+    const clientId = req.params.clientId;
+    const client = await Client.findbyId(clientId);
     if (!client) {
       return next(
         createError(404, `Client with ID: ${req.params.clientId} not found`)
       );
     }
-    res.send(req.client);
+    res.json(client);
   } catch (error) {
     next(error);
   }
@@ -49,65 +50,21 @@ export const getMe = async (req, res, next) => {
   }
 };
 
-// 3. CREATE NEW CLIENT **************************************************************************************/
-// export const registerClient = async (req, res, next) => {
-//   try {
-//     Client.findOne({ email: req.body.email }).then((client) => {
-//       if (client) {
-//         return res.status(400).json({
-//           email: "Email already registered, continue to login",
-//         });
-//       } else {
-//         const newClient = new Client(req.body);
-//         const { _id } = newClient.save();
-//         return res.status(201).json({ msg: newClient });
-//       }
-//     });
-//   } catch (error) {
-//     if (error.name === "validationError") {
-//       next(createError(400, error));
-//     }
-//     next(error);
-//   }
-// };
-
-export const regUser = async (req, res, next) => {
-  try {
-    Client.findOne({ email: req.body.email }).then((client) => {
-      if (client) {
-        return res.status(400).json({
-          email: "Email already registered, continue to login",
-        });
-      } else {
-        const newClient = new Client(req.body);
-        const { _id } = newClient.save();
-        return res.status(201).json({ msg: newClient });
-      }
-    });
-  } catch (error) {
-    if (error.name === "validationError") {
-      next(createError(400, error));
-    }
-    next(error);
-  }
-};
-
 // 4. UPDATE SINGLE **************************************************************************************/
 
 export const updateClient = async (req, res, next) => {
   const update = { ...req.body };
   try {
-    const updatedClient = await Client.findbyIDandUpdate(
-      req.params.clientID,
-      update,
-      { new: true, runValidators: true }
-    );
-    if (!updatedClient) {
-      return next(createError(404, "Client not found"));
+    const clientId = req.params.clientId;
+    const updatedClient = await Client.findbyIDandUpdate(clientId, update, {
+      new: true,
+      runValidators: true,
+    });
+    if (updatedClient) {
+      res.status(200).send(" 🛠️ Updated successfully 🛠️", updatedClient);
+    } else {
+      next(createError(404, `Client with _id ${clientId} not found!`));
     }
-
-    await req.client.save();
-    res.send("Updated successfully");
   } catch (error) {
     next(error);
   }
@@ -116,9 +73,10 @@ export const updateClient = async (req, res, next) => {
 // 5. DELETE SINGLE **************************************************************************************/
 export const deleteClient = async (req, res, next) => {
   try {
-    await Client.findByIdAndDelete(req.client._id);
-    await req.client.deleteOne();
-    res.status(204).send("Deleted");
+    const clientId = req.params.clientId;
+    await Client.findByIdAndDelete(clientId);
+    await clientId.deleteOne();
+    res.status(200).send(" ⚠️ 🗑️ Deleted ⚠️");
   } catch (error) {
     next(error);
   }

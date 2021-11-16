@@ -5,12 +5,12 @@ import { usersImgParser } from "../settings/cloudinary.js";
 
 const clientsRouter = express.Router();
 
+clientsRouter.route("/").get(Controllers.getAllClients);
 clientsRouter
-  .route("/me")
-  .get(JWTAuthenticate, Controllers.getMe)
-  .post(JWTAuthenticate, Controllers.getMe)
-  .put(JWTAuthenticate, Controllers.getMe)
-  .delete(JWTAuthenticate, Controllers.getMe);
+  .route("/:clientId")
+  .get(Controllers.getSingleClient)
+  .put(Controllers.updateClient)
+  .delete(Controllers.deleteClient);
 
 // clientsRouter
 //     .route("/me/favorites")

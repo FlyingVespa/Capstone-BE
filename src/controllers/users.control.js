@@ -1,8 +1,11 @@
 import express, { request } from "express";
 import createError from "http-errors";
 
-import {JWTAuthenticate, refreshTokens } from "../middlewares/login.middleware.js"
-import User from "../services/users/usersSchema.js"
+import {
+  JWTAuthenticate,
+  refreshTokens,
+} from "../middlewares/login.middleware.js";
+import User from "../schema/user.schema.js";
 // 1. GET all
 // 2. GET Single
 // 3. POST Create Single
@@ -11,7 +14,6 @@ import User from "../services/users/usersSchema.js"
 // 6. REFRESH Token
 // 7. LOGIN Single
 // 8. LOUGOUT Single
-
 
 // 1. GET ALL **************************************************************************************/
 export const getAllUsers = async (req, res, next) => {

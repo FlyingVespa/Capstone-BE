@@ -1,7 +1,10 @@
 import createError from "http-errors";
 
-import {JWTAuthenticate, refreshTokens } from "../middlewares/login.middleware.js"
-import Client from "../services/customers/clientsSchema.js"
+import {
+  JWTAuthenticate,
+  refreshTokens,
+} from "../middlewares/login.middleware.js";
+import Client from "../schema/client.schema.js";
 // 1. GET all
 // 2. GET Single
 // 3. POST Create Single
@@ -10,7 +13,6 @@ import Client from "../services/customers/clientsSchema.js"
 // 6. REFRESH Token
 // 7. LOGIN Single
 // 8. LOUGOUT Single
-
 
 // 1. GET ALL **************************************************************************************/
 export const getAllClients = async (req, res, next) => {
@@ -26,10 +28,10 @@ export const getAllClients = async (req, res, next) => {
 
 export const getSingleClient = async (req, res, next) => {
   try {
-    const client = await Client.findbyId(req.params.clientID);
+    const client = await Client.findbyId(req.params.clientId);
     if (!client) {
       return next(
-        createError(404, `Client with ID: ${req.params.clientID} not found`)
+        createError(404, `Client with ID: ${req.params.clientId} not found`)
       );
     }
     res.send(req.client);
@@ -48,38 +50,35 @@ export const getMe = async (req, res, next) => {
 };
 
 // 3. CREATE NEW CLIENT **************************************************************************************/
-export const registerClient = async (req, res, next) => {
-  try {
-    
-    Client.findOne({ email: req.body.email }).then((client) => {
-      if (client) {
-        return res.status(400).json({
-          email: "Email already registered, continue to login",
-        });
-      } else {
-        const newClient = new Client(req.body);
-        const { _id } = newClient.save();
-        return res.status(201).json({ msg: newClient });
-      }
-    });
-  } catch (error) {
-    if (error.name === "validationError") {
-      next(createError(400, error));
-    }
-    next(error);
-  }
-};
+// export const registerClient = async (req, res, next) => {
+//   try {
+//     Client.findOne({ email: req.body.email }).then((client) => {
+//       if (client) {
+//         return res.status(400).json({
+//           email: "Email already registered, continue to login",
+//         });
+//       } else {
+//         const newClient = new Client(req.body);
+//         const { _id } = newClient.save();
+//         return res.status(201).json({ msg: newClient });
+//       }
+//     });
+//   } catch (error) {
+//     if (error.name === "validationError") {
+//       next(createError(400, error));
+//     }
+//     next(error);
+//   }
+// };
 
 export const regUser = async (req, res, next) => {
   try {
-    
     Client.findOne({ email: req.body.email }).then((client) => {
       if (client) {
         return res.status(400).json({
           email: "Email already registered, continue to login",
         });
       } else {
-        
         const newClient = new Client(req.body);
         const { _id } = newClient.save();
         return res.status(201).json({ msg: newClient });
@@ -92,7 +91,6 @@ export const regUser = async (req, res, next) => {
     next(error);
   }
 };
-
 
 // 4. UPDATE SINGLE **************************************************************************************/
 

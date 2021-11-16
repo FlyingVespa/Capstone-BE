@@ -1,17 +1,16 @@
-import  JWT  from "jsonwebtoken";
+import JWT from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import Client from "../services/customers/clientsSchema.js";
-import User from "../services/users/usersSchema.js";
+import Client from "../schema/client.schema.js";
+import User from "../schema/user.schema.js";
 
 export const loginUser = async (req, res) => {
   let { email, password, role } = req.body;
-  const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
   try {
-    if (role === "client") {
+    if (req.body.role === "client") {
       let client = await Client.findOne({ email: email });
       const isMatch = await bcrypt.compare(password, client.password);
       if (isMatch) {
@@ -68,5 +67,3 @@ export const loginUser = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
-
-

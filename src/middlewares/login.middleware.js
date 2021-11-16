@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import userSchema from "../services/users/usersSchema.js";
-import clientsSchema from "../services/customers/clientsSchema.js";
+import userSchema from "../schema/user.schema.js";
+import clientsSchema from "../schema/client.schema.js";
 
 //1. JWT
 //3. VERIFY TYPE OF USER
@@ -8,7 +8,6 @@ import clientsSchema from "../services/customers/clientsSchema.js";
 const EXPIRE_10_MINUTES = "900000";
 
 export const JWTAuthenticate = async (user) => {
-  
   const accessToken = await generateJWT({ _id: user._id });
   const refreshToken = await generateRefreshJWT({ _id: user._id });
   user.refreshToken = refreshToken;
@@ -77,23 +76,21 @@ export const refreshTokens = async (actualRefreshToken) => {
 // 2. VERIFY TYPE OF USER
 
 export const VerifyUserType = async (req, res, next) => {
-    try {
-      let verifyEmail = await userSchema.findOne({ email: req.body.email });
-        if (verifyEmail) {
-        req.body.role = 'business';
+  try {
+    let verifyEmail = await userSchema.findOne({ email: req.body.email });
+    if (verifyEmail) {
+      req.body.role = "business";
+      next();
+    } else {
+      verifyEmail = await clientsSchema.findOne({ email: req.body.email });
+      if (verifyEmail && !null) {
+        req.body.role = "client";
         next();
       } else {
-        verifyEmail = await clientsSchema.findOne({ email: req.body.email });
-        if (verifyEmail && !null) {
-          req.body.role = 'client';
-          next();
-        } else {
-          res.status(400).send('Credentials entered are incorrect or not found');
-        }
+        res.status(400).send("Credentials entered are incorrect or not found");
       }
-    } catch (error) {
-      next(error);
     }
-  };
-  
- 
+  } catch (error) {
+    next(error);
+  }
+};

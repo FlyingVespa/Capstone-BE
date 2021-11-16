@@ -29,10 +29,10 @@ export const getAllUsers = async (req, res, next) => {
 
 export const getSingleUser = async (req, res, next) => {
   try {
-    const user = await User.findbyId(req.params.userID);
+    const user = await User.findbyId(req.params.userId);
     if (!user) {
       return next(
-        createError(404, `User with ID: ${req.params.userID} not found`)
+        createError(404, `User with ID: ${req.params.userId} not found`)
       );
     }
     res.send(req.user);
@@ -78,7 +78,7 @@ export const updateUser = async (req, res, next) => {
   const update = { ...req.body };
   try {
     const updatedUser = await User.findbyIDandUpdate(
-      req.params.userID,
+      req.params.userId,
       update,
       { new: true, runValidators: true }
     );

@@ -16,24 +16,15 @@ import Product from "../schema/product.schema.js";
 // 1. GET ALL **************************************************************************************/
 export const getAllProducts = async (req, res, next) => {
   try {
-    const query = q2m(req.query);
-    const totalProducts = await Product.countDocuments(query.criteria);
-    const products = await Product.find().populate({
-      path: "userId",
-      select: "-password",
-    });
-    res.send({
-      links: query.links("/products", totalProducts),
-      totalProducts,
-      products,
-    });
+    const products = await Product.find();
+    res.send(products);
   } catch (error) {
-    next(createError(500, "An error occurred while retrieving products "));
+    next();
   }
 };
 // 2. GET Single
 
-export const getSinglePost = async (req, res, next) => {
+export const getSingleProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
     const product = await Product.findById(productId);
@@ -49,18 +40,23 @@ export const getSinglePost = async (req, res, next) => {
 
 // 2. POST Single
 export const addNewProduct = async (req, res, next) => {
-  const userId = req.body.userId;
   try {
-    const user = await User.findById(userId);
+    const businessId = req.body.businessId;
+    const user = await User.findById(businessId);
     if (!user)
-      return next(createError(404, `User with id ${userId} not found`));
-
-    const newProductData = {
-      product: req.body.product,
-      businessname: user.businessname,
-      userId: userId,
-    };
-
+      return next(createError(404, `User with id ${businessId} not found`));
+    // const { product, price, units, status, category, image, businessId } =
+    //   req.body;
+    // const newProductData = {
+    //   product: product,
+    //   price: price,
+    //   units: units,
+    //   status: status,
+    //   category: category,
+    //   image: image,
+    //   businessId: businessId, --- change name conflict
+    // };
+    const newProductData = { ...req.body };
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();
 
@@ -87,23 +83,18 @@ export const updateProduct = async (req, res, next) => {
       }
     );
     if (updatedProduct) {
-      res.send(updatedProduct);
+      res.send(`🛠️ Updated successfully 🛠️ ${updatedProduct}`);
     } else {
       next(createError(404, `Product with _id ${productId} not found!`));
     }
   } catch (error) {
-    next(
-      createError(
-        500,
-        `An error occurred while updating post ${req.params.productId}`
-      )
-    );
+    next(createError(500, `An error occurred while updating product`));
   }
 };
 // DELETE
 export const deleteProduct = async (req, res, next) => {
   try {
-    const productId = req.params.postId;
+    const productId = req.params.productId;
     const deletedProduct = await Product.findByIdAndDelete(productId);
 
     if (deletedProduct) {
@@ -114,7 +105,7 @@ export const deleteProduct = async (req, res, next) => {
       next(createError(404, `productId with _id ${productId} not found!`));
     }
   } catch (error) {
-    next(createError(500, error));
+    next(error);
   }
 };
 

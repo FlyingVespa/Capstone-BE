@@ -2,9 +2,6 @@ import jwt from "jsonwebtoken";
 import userSchema from "../schema/user.schema.js";
 import clientsSchema from "../schema/client.schema.js";
 
-//1. JWT
-//3. VERIFY TYPE OF USER
-
 const EXPIRE_10_MINUTES = "900000";
 
 export const JWTAuthenticate = async (user) => {

@@ -4,27 +4,23 @@ import Client from "../schema/client.schema.js";
 import User from "../schema/user.schema.js";
 
 export const loginUser = async (req, res) => {
-  let { email, password, role } = req.body;
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
+  const EXP_TIME = "1d";
   try {
     if (req.body.role === "client") {
-      let client = await Client.findOne({ email: email });
-      const isMatch = await bcrypt.compare(password, client.password);
+      let client = await Client.findOne({ email: req.body.email });
+      const isMatch = await bcrypt.compare(req.body.password, client.password);
       if (isMatch) {
         const payload = {
           userInfo: {
-            id: client._id,
-            type: role,
+            _id: client._id,
+            role: role,
           },
         };
         JWT.sign(
           payload,
           process.env.JWT_SECRET,
           {
-            expiresIn: 900000,
+            expiresIn: EXP_TIME,
           },
           (err, token) => {
             if (err) throw err;
@@ -48,7 +44,7 @@ export const loginUser = async (req, res) => {
           payload,
           process.env.JWT_SECRET,
           {
-            expiresIn: 900000,
+            expiresIn: EXP_TIME,
           },
           (err, token) => {
             if (err) throw err;

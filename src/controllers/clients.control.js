@@ -29,15 +29,14 @@ export const getAllClients = async (req, res, next) => {
 export const getSingleClient = async (req, res, next) => {
   try {
     const clientId = req.params.clientId;
-    const client = await Client.findbyId(clientId);
-    if (!client) {
-      return next(
-        createError(404, `Client with ID: ${req.params.clientId} not found`)
-      );
+    const client = await Client.findById(clientId);
+    if (client) {
+      res.send(client);
+    } else {
+      next(createError(404, `Client not found!`));
     }
-    res.json(client);
   } catch (error) {
-    next(error);
+    next(createError(500, "An error occurred while retrieving client info "));
   }
 };
 
@@ -53,20 +52,19 @@ export const getMe = async (req, res, next) => {
 // 4. UPDATE SINGLE **************************************************************************************/
 
 export const updateClient = async (req, res, next) => {
-  const update = { ...req.body };
   try {
     const clientId = req.params.clientId;
-    const updatedClient = await Client.findbyIDandUpdate(clientId, update, {
+    const updatedClient = await Client.findByIdAndUpdate(clientId, req.body, {
       new: true,
       runValidators: true,
     });
     if (updatedClient) {
-      res.status(200).send(" 🛠️ Updated successfully 🛠️", updatedClient);
+      res.status(201).send(updatedClient);
     } else {
       next(createError(404, `Client with _id ${clientId} not found!`));
     }
   } catch (error) {
-    next(error);
+    next(createError(500, `An error occurred while updating client`));
   }
 };
 
@@ -76,7 +74,10 @@ export const deleteClient = async (req, res, next) => {
     const clientId = req.params.clientId;
     await Client.findByIdAndDelete(clientId);
     await clientId.deleteOne();
-    res.status(200).send(" ⚠️ 🗑️ Deleted ⚠️");
+    res.json({
+      success: true,
+      message: "Deleted success",
+    });
   } catch (error) {
     next(error);
   }

@@ -113,15 +113,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.toJSON = function () {
-  const userDocument = this;
-  const userObject = userDocument.toObject();
-  delete userObject.password;
-  delete userObject.__v;
-  delete userObject.refreshToken;
-  return userObject;
-};
-
 userSchema.statics.checkCredentials = async function (email, plainPW) {
   const user = await this.findOne({ email });
   if (user) {
@@ -131,6 +122,15 @@ userSchema.statics.checkCredentials = async function (email, plainPW) {
   } else {
     return null;
   }
+};
+
+userSchema.methods.toJSON = function () {
+  const userDocument = this;
+  const userObject = userDocument.toObject();
+  delete userObject.password;
+  delete userObject.__v;
+  delete userObject.refreshToken;
+  return userObject;
 };
 
 export default model("User", userSchema);

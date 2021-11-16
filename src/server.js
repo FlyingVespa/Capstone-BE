@@ -47,7 +47,7 @@ server.use(bodyParser.json());
 server.use("/register", registerRouter);
 server.use("/business", usersRouter);
 server.use("/profile", clientsRouter);
-server.use("/business", productsRouter);
+server.use("/products", productsRouter);
 server.use("/login", loginRouter);
 
 // * ERROR MIDDLEWARES ******************************************************//

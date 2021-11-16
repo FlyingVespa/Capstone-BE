@@ -19,6 +19,13 @@ const productSchema = new Schema({
       return `https://eu.ui-avatars.com/api/?name=product`;
     },
   },
-  timestamps: true,
 });
+
+productSchema.methods.toJSON = function () {
+  const productDocument = this;
+  const productObject = productDocument.toObject();
+  delete productObject.__v;
+  return productObject;
+};
+
 export default model("Product", productSchema);

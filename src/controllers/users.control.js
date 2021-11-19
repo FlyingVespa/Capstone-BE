@@ -25,23 +25,8 @@ export const getAllUsers = async (req, res, next) => {
   }
 };
 
-// 2. GET SINGLE with Auth **************************************************************************************/
+// 2. GET SINGLE LOGGEDIN with Auth **************************************************************************************/
 
-export const getSingleUser = async (req, res, next) => {
-  try {
-    const user = await User.findbyId(req.params.userId);
-    if (!user) {
-      return next(
-        createError(404, `User with ID: ${req.params.userId} not found`)
-      );
-    }
-    res.send(req.user);
-  } catch (error) {
-    next(error);
-  }
-};
-
-// 2. GET SINGLE with Auth **************************************************************************************/
 export const getMe = async (req, res, next) => {
   try {
     res.send(req.user);
@@ -50,24 +35,20 @@ export const getMe = async (req, res, next) => {
   }
 };
 
-// 3. CREATE NEW USER **************************************************************************************/
-export const registerUser = async (req, res, next) => {
+// 2. GET SINGLE SPECIFIC USER **************************************************************************************/
+
+export const getSingleUser = async (req, res, next) => {
   try {
-    User.findOne({ email: req.body.email }).then((user) => {
-      if (user) {
-        return res.status(400).json({
-          email: "Email already registered, continue to login",
-        });
-      } else {
-        const newUser = new User(req.body);
-        const { _id } = newUser.save();
-        return res.status(201).json({ msg: newUser });
-      }
-    });
-  } catch (error) {
-    if (error.name === "validationError") {
-      next(createError(400, error));
+    const userId = req.params.userId;
+    const user = await User.findbyId(userId);
+    if (!user) {
+      return next(
+        createError(404, `User with ID: ${req.params.userId} not found`)
+      );
+    } else {
+      res.send(req.user);
     }
+  } catch (error) {
     next(error);
   }
 };
@@ -75,7 +56,7 @@ export const registerUser = async (req, res, next) => {
 // 4. UPDATE SINGLE **************************************************************************************/
 
 export const updateUser = async (req, res, next) => {
-  const update = { ...req.body };
+  const update = { ...req.body, updatedAt: Date.now() };
   try {
     const updatedUser = await User.findbyIDandUpdate(
       req.params.userId,

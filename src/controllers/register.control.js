@@ -12,7 +12,6 @@ export const registerAccount = async (req, res, next) => {
           return res.status(400).json({
             email:
               "Email already registered to an USER account, continue to login",
-            url: "Url Already taken, please choose a unique URL",
           });
         } else {
           const newUser = new User(req.body);

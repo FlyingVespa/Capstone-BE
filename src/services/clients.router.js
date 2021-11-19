@@ -8,8 +8,8 @@ const clientsRouter = express.Router();
 clientsRouter.route("/").get(Controllers.getAllClients);
 clientsRouter
   .route("/:clientId")
-  .get(Controllers.getSingleClient)
-  .put(Controllers.updateClient)
-  .delete(Controllers.deleteClient);
+  .get(JWTAuthenticate, Controllers.getSingleClient)
+  .put(JWTAuthenticate, Controllers.updateClient)
+  .delete(JWTAuthenticate, Controllers.deleteClient);
 
 export default clientsRouter;

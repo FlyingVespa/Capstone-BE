@@ -4,7 +4,7 @@ import User from "../schema/user.schema.js";
 import { JWTAuthenticate } from "../middlewares/login.middleware.js";
 
 export const loginUser = async (req, res) => {
-  const EXP_TIME = "1d";
+  const cookieAge = 48 * 60 * 60 * 1000;
   try {
     // if (req.body.role === "client") {
     const client = await Client.findOne({ email: req.body.email });
@@ -16,8 +16,11 @@ export const loginUser = async (req, res) => {
       );
       if (validPassword) {
         const token = JWTAuthenticate(client);
-        res.cookie("Token", token);
-        res.status(200).send(token);
+        res.cookie("usertoken", token, {
+          httpOnly: true,
+          maxAge: cookieAge,
+        });
+        res.status(200).send(client);
       } else {
         res.status(400).json({ error: "Invalid Password" });
       }
@@ -28,12 +31,12 @@ export const loginUser = async (req, res) => {
       );
       if (validPassword) {
         const token = JWTAuthenticate(user);
-        res.cookie("jwt", token, {
+        res.cookie("usertoken", token, {
           httpOnly: true,
-          maxAge: 3 * 24 * 60 * 60 * 1000,
+          maxAge: cookieAge,
         });
 
-        res.status(200).send(token);
+        res.status(200).send(user);
       } else {
         res.status(400).json({ error: "Invalid Password" });
       }
@@ -90,7 +93,7 @@ export const loginUser = async (req, res) => {
 };
 
 export const userLogout = (req, res) => {
-  res.clearCookie("jwt");
+  res.clearCookie("token");
 
   return res.redirect("/login");
 };

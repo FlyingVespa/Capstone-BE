@@ -78,7 +78,7 @@ export const loginMiddleware = async (req, res, next) => {
     if (!req.headers.cookie) {
       next(CreateHttpError(401, "please provide credentials"));
     } else {
-      const token = req.headers.cookie.split("Token=")[1];
+      const token = req.headers.cookie.split("token=")[1];
       const decodedToken = await JWTAuthenticate(token);
       const user = await User.findById(decodedToken._id);
       const client = await Client.findById(decodedToken._id);

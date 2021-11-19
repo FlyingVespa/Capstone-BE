@@ -2,9 +2,8 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import listEndpoints from "express-list-endpoints";
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+// import corsConfig from "./settings/cors";
 import helmet from "helmet";
 import {
   unAuthorizedHandler,
@@ -37,8 +36,20 @@ server.listen(PORT, async () => {
 server.on("error", (error) =>
   console.log(`❌ Server is not running due to : ${error}`)
 );
+const trustOrigins = [process.env.FRONTEND_PROD_URL];
 
-server.use(cors());
+const corsConfig = {
+  origin: function (origin, callback) {
+    if (!origin || trustOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Origin not allowed"));
+    }
+  },
+  credentials: true,
+};
+
+server.use(cors(corsConfig));
 
 server.use(express.json());
 server.use(helmet());

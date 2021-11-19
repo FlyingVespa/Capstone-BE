@@ -1,7 +1,7 @@
-import JWT from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import Client from "../schema/client.schema.js";
 import User from "../schema/user.schema.js";
+import { JWTAuthenticate } from "../middlewares/login.middleware.js";
 
 export const loginUser = async (req, res) => {
   const EXP_TIME = "1d";
@@ -15,12 +15,9 @@ export const loginUser = async (req, res) => {
         client.password
       );
       if (validPassword) {
-        const token = JWTAuthenticate(client._id);
-        res.cookie("jwt", token, {
-          httpOnly: true,
-          maxAge: 3 * 24 * 60 * 60 * 1000,
-        });
-        res.status(200).json({ user: client._id });
+        const token = JWTAuthenticate(client);
+        res.cookie("Token", token);
+        res.status(200).send(token);
       } else {
         res.status(400).json({ error: "Invalid Password" });
       }
@@ -30,7 +27,13 @@ export const loginUser = async (req, res) => {
         user.password
       );
       if (validPassword) {
-        res.status(200).json({ message: "Valid password" });
+        const token = JWTAuthenticate(user);
+        res.cookie("jwt", token, {
+          httpOnly: true,
+          maxAge: 3 * 24 * 60 * 60 * 1000,
+        });
+
+        res.status(200).send(token);
       } else {
         res.status(400).json({ error: "Invalid Password" });
       }
@@ -84,4 +87,10 @@ export const loginUser = async (req, res) => {
 
     res.status(500).send("Server Error");
   }
+};
+
+export const userLogout = (req, res) => {
+  res.clearCookie("jwt");
+
+  return res.redirect("/login");
 };

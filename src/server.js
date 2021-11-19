@@ -4,7 +4,8 @@ import mongoose from "mongoose";
 import listEndpoints from "express-list-endpoints";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-
+import cookieParser from "cookie-parser";
+import helmet from "helmet";
 import {
   unAuthorizedHandler,
   forbiddenErrHandler,
@@ -40,15 +41,24 @@ server.on("error", (error) =>
 server.use(cors());
 
 server.use(express.json());
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(bodyParser.json());
+server.use(helmet());
+server.use(cookieParser());
 
 // * ENDPOINTS ****************************************************************//
+
 server.use("/register", registerRouter);
 server.use("/business", usersRouter);
 server.use("/profile", clientsRouter);
 server.use("/products", productsRouter);
-server.use("/login", loginRouter);
+server.use("/auth", loginRouter);
+
+// server.get("/", (req, res) => {
+//   res.send("welcome to a simple HTTP cookie server");
+// });
+// server.get("/setcookie", (req, res) => {
+//   res.cookie(`Cookie token name`, `encrypted cookie string Value`);
+//   res.send("Cookie have been saved successfully");
+// });
 
 // * ERROR MIDDLEWARES ******************************************************//
 server.use(unAuthorizedHandler);

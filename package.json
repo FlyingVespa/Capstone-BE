@@ -12,6 +12,7 @@
   "author": "Hedri",
   "license": "ISC",
   "dependencies": {
+    "@mui/x-data-grid-pro": "^5.0.1",
     "atob": "^2.1.2",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",

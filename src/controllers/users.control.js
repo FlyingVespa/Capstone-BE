@@ -40,7 +40,7 @@ export const getMe = async (req, res, next) => {
 export const getSingleUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const user = await User.findbyId(userId);
+       const user = await User.findOne( {url :userId});
     if (!user) {
       return next(
         createError(404, `User with ID: ${req.params.userId} not found`)

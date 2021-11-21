@@ -60,7 +60,7 @@ server.use(cookieParser());
 server.use("/register", registerRouter);
 server.use("/business", usersRouter);
 server.use("/profile", clientsRouter);
-server.use("/products", productsRouter);
+server.use("/business/:userId/dashboard", productsRouter);
 server.use("/auth", loginRouter);
 
 // server.get("/", (req, res) => {

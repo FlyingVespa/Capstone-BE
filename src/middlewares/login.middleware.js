@@ -3,13 +3,13 @@ import User from "../schema/user.schema.js";
 import Client from "../schema/client.schema.js";
 import CreateHttpError from "http-errors";
 
-const EXPIRE_10_MINUTES = "1d";
+const EXPIRE_10_MINUTES = "1000000";
 
-export const JWTAuthenticate = async (user) => {
+export const getTokens = async (user) => {
   const accessToken = await generateJWT({ _id: user._id });
   const refreshToken = await generateRefreshJWT({ _id: user._id });
   user.refreshToken = refreshToken;
-  await user.save(function () {});
+  user.save();
   return { accessToken, refreshToken };
 };
 
@@ -18,7 +18,7 @@ const generateJWT = (payload) =>
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: EXPIRE_10_MINUTES },
+      { expiresIn: "1w" },
       (err, token) => {
         if (err) reject(err);
         resolve(token);
@@ -31,22 +31,22 @@ const generateRefreshJWT = (payload) =>
     jwt.sign(
       payload,
       process.env.JWT_REFRESH_SECRET,
-      { expiresIn: EXPIRE_10_MINUTES },
+      { expiresIn: "2w" },
       (err, token) => {
         if (err) reject(err);
         resolve(token);
       }
     )
   );
-
-export const verifyJWT = (token) =>
+export const verifyJWT = (token) => {
   new Promise((resolve, reject) =>
     jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
+      console.log(err, decodedToken);
       if (err) reject(err);
       resolve(decodedToken);
     })
   );
-
+};
 const verifyRefreshJWT = (token) =>
   new Promise((resolve, reject) =>
     jwt.verify(token, process.env.JWT_REFRESH_SECRET, (err, decodedToken) => {
@@ -75,27 +75,51 @@ export const refreshTokens = async (actualRefreshToken) => {
 
 export const loginMiddleware = async (req, res, next) => {
   try {
-    if (!req.headers.cookie) {
-      next(CreateHttpError(401, "please provide credentials"));
-    } else {
-      const token = req.headers.cookie.split("token=")[1];
-      const decodedToken = await JWTAuthenticate(token);
-      const user = await User.findById(decodedToken._id);
-      const client = await Client.findById(decodedToken._id);
-      if (user && !client) {
-        req.user = user;
-        next();
-      } else if (client && !user) {
-        req.client = client;
-        next();
-      } else {
-        next(CreateHttpError(404, "user not found"));
-      }
+    //const token = req.cookies.accessToken;
+    console.log(req.cookies.accessToken);
+    if (!req.cookies.accessToken) {
+      console.log(req.cookies.accessToken);
+      //  return next(createError(401, "Please provide credentials in cookies."));
+    }
+    const decodedToken = await verifyJWT(token);
+    // const user = await User.findById(decodedToken._id);
+    const client = await Client.findById(decodedToken._id);
+    // if (!user && !client) return next(createError(404, "User not found."));
+    if (client) {
+      req.user = client;
+      next();
     }
   } catch (error) {
-    next(CreateHttpError(401, "Token not valid"));
+    next(createError(401, "Invalid token"));
   }
 };
+
+// const checkUser = (req, res, next) => {
+//   const token = req.cookies.jwt;
+//   if (token) {
+//     jwt.verify(token, JWT_SECRET, async (err, decodedToken) => {
+//       if (err) {
+//         res.locals.user = null;
+//         next();
+//       } else {
+//         let client = await Client.findById(decodedToken._id);
+//         let user = await User.findById(decodedToken._id);
+
+//         if (client && !user) {
+//           res.locals.user = client;
+//           next();
+//         }
+//         if (user && !client) {
+//           res.locals.user = user;
+//           next();
+//         }
+//       }
+//     });
+//   } else {
+//     res.locals.user = null;
+//     next();
+//   }
+// };
 
 export const verifyRole = async (req, res, next) => {
   try {

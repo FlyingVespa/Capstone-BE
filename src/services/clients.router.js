@@ -9,8 +9,8 @@ clientsRouter.route("/").get(Controllers.getAllClients);
 clientsRouter.route("/:clientId").get(Controllers.getSingleClient);
 clientsRouter
   .route("/me")
-  .get(loginMiddleware, Controllers.getSingleClient)
-  .put(loginMiddleware, Controllers.updateClient)
+  .get(loginMiddleware, Controllers.getMe)
+  .post(loginMiddleware, Controllers.updateClient)
   .delete(loginMiddleware, Controllers.deleteClient);
 
 export default clientsRouter;

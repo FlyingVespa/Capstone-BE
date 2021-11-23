@@ -1,9 +1,6 @@
 import createError from "http-errors";
 
-import {
-  JWTAuthenticate,
-  refreshTokens,
-} from "../middlewares/login.middleware.js";
+import { getTokens, refreshTokens } from "../middlewares/login.middleware.js";
 import Client from "../schema/client.schema.js";
 // 1. GET all
 // 2. GET Single
@@ -43,6 +40,7 @@ export const getSingleClient = async (req, res, next) => {
 // 2. GET SINGLE with Auth **************************************************************************************/
 export const getMe = async (req, res, next) => {
   try {
+    console.log("test getMe");
     res.send(req.client);
   } catch (error) {
     next(error);
@@ -97,21 +95,6 @@ export const refreshToken = async (req, res, next) => {
 };
 
 // 7. LOGIN **************************************************************************************/
-
-export const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const client = await Client.checkCredentials(email, password);
-    if (client) {
-      const { accessToken, refreshToken } = await JWTAuthenticate(client);
-      res.send({ accessToken, refreshToken });
-    } else {
-      next(createError(401, "Credentials not valid!"));
-    }
-  } catch (error) {
-    next(error);
-  }
-};
 
 // 8. LOUGOUT **************************************************************************************/
 export const logout = async (req, res, next) => {

@@ -1,12 +1,11 @@
 import bcrypt from "bcrypt";
 import Client from "../schema/client.schema.js";
 import User from "../schema/user.schema.js";
-import { JWTAuthenticate } from "../middlewares/login.middleware.js";
+import { getTokens } from "../middlewares/login.middleware.js";
 
 export const loginUser = async (req, res) => {
   const cookieAge = 48 * 60 * 60 * 1000;
   try {
-    // if (req.body.role === "client") {
     const client = await Client.findOne({ email: req.body.email });
     const user = await User.findOne({ email: req.body.email });
     if (client && !user) {
@@ -15,14 +14,12 @@ export const loginUser = async (req, res) => {
         client.password
       );
       if (validPassword) {
-        const token = JWTAuthenticate(client);
-        res.cookie("usertoken", token, {
-          httpOnly: true,
-          maxAge: cookieAge,
-        });
-        res.status(200).send(client);
+        const { accessToken, refreshToken } = await getTokens(client);
+        await res.cookie("accessToken", accessToken);
+        await res.cookie("refreshToken", refreshToken);
+        res.status(200).send({ accessToken, refreshToken });
       } else {
-        res.status(400).json({ error: "Invalid Password" });
+        res.status(400).json({ error: "Invalid Client Password" });
       }
     } else if (user && !client) {
       const validPassword = await bcrypt.compare(
@@ -30,64 +27,18 @@ export const loginUser = async (req, res) => {
         user.password
       );
       if (validPassword) {
-        const token = JWTAuthenticate(user);
-        res.cookie("usertoken", token, {
-          httpOnly: true,
-          maxAge: cookieAge,
-        });
-
-        res.status(200).send(user);
+        const { accessToken, refreshToken } = await getTokens(user);
+        await res.cookie("accessToken", accessToken);
+        await res.cookie("refreshToken", refreshToken);
+        res.status(200).send({ accessToken, refreshToken });
       } else {
-        res.status(400).json({ error: "Invalid Password" });
+        res.status(400).json({ error: "Invalid Client Password" });
       }
     } else if (!user && !client) {
-      res.status(401).json({ error: "User does not exist" });
+      res.status(404).json({ error: "User does not exist" });
     }
-
-    //     JWT.sign(
-    //       payload,
-    //       process.env.JWT_SECRET,
-    //       {
-    //         expiresIn: EXP_TIME,
-    //       },
-    //       (err, token) => {
-    //         if (err) throw err;
-    //         res.json({ token });
-    //       }
-    //     );
-    //   } else {
-    //     res.status(401).send("Password Incorrect");
-    //   }
-    // } else if (role === "business") {
-    //   let user = await User.findOne({ email: email });
-    //   const isMatch = await bcrypt.compare(password, user.password);
-    //   if (isMatch) {
-    //     const payload = {
-    //       userInfo: {
-    //         id: user._id,
-    //         type: role,
-    //       },
-    //     };
-    //     JWT.sign(
-    //       payload,
-    //       process.env.JWT_SECRET,
-    //       {
-    //         expiresIn: EXP_TIME,
-    //       },
-    //       (err, token) => {
-    //         if (err) throw err;
-    //         res.json({ token });
-    //       }
-    //     );
-    //   } else {
-    //     res.status(401).send("Password Incorrect");
-    //   }
-    // } else {
-    //   res.status(400).send("No User not found");
-    // }
   } catch (error) {
     console.log(error.message);
-
     res.status(500).send("Server Error");
   }
 };
@@ -96,4 +47,23 @@ export const userLogout = (req, res) => {
   res.clearCookie("token");
 
   return res.redirect("/login");
+};
+
+export const refresh = async (req, res, next) => {
+  const { refreshToken } = req.cookies;
+  if (!refreshToken)
+    return next(createError(400, "Refresh token must be provided"));
+  try {
+    const tokens = await refreshTokens(refreshToken);
+    if (!tokens) return next(createError(401, "Invalid token"));
+    res.cookie("accessToken", tokens.accessToken, {
+      httpOnly: true,
+    });
+    res.cookie("refreshToken", tokens.refreshToken, {
+      httpOnly: true,
+    });
+    res.status(204).send();
+  } catch (error) {
+    next(createError(500, error));
+  }
 };

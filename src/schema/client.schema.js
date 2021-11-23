@@ -32,7 +32,6 @@ const clientSchema = new Schema(
         return `https://eu.ui-avatars.com/api/?name=test`;
       },
     },
-    //  shopping_cart: notReqString
   },
   { timestamps: true }
 );
@@ -40,11 +39,11 @@ const clientSchema = new Schema(
 clientSchema.pre(
   "save",
   async function (next) {
-    // const salt = genSalt(10);
+    const salt = await bcrypt.genSalt();
     const newClient = this;
     const plainPW = newClient.password;
     if (newClient.isModified("password")) {
-      newClient.password = await bcrypt.hash(plainPW, 10);
+      newClient.password = await bcrypt.hash(plainPW, salt);
     }
     next();
   },

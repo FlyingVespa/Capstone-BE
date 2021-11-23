@@ -1,10 +1,7 @@
 import express, { request } from "express";
 import createError from "http-errors";
 
-import {
-  JWTAuthenticate,
-  refreshTokens,
-} from "../middlewares/login.middleware.js";
+import { getTokens, refreshTokens } from "../middlewares/login.middleware.js";
 import User from "../schema/user.schema.js";
 // 1. GET all
 // 2. GET Single
@@ -40,7 +37,7 @@ export const getMe = async (req, res, next) => {
 export const getSingleUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
-       const user = await User.findOne( {url :userId});
+    const user = await User.findOne({ url: userId });
     if (!user) {
       return next(
         createError(404, `User with ID: ${req.params.userId} not found`)
@@ -100,20 +97,20 @@ export const refreshToken = async (req, res, next) => {
 
 // 7. LOGIN **************************************************************************************/
 
-export const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.checkCredentials(email, password);
-    if (user) {
-      const { accessToken, refreshToken } = await JWTAuthenticate(user);
-      res.send({ accessToken, refreshToken });
-    } else {
-      next(createError(401, "Credentials not valid!"));
-    }
-  } catch (error) {
-    next(error);
-  }
-};
+// export const login = async (req, res, next) => {
+//   try {
+//     const { email, password } = req.body;
+//     const user = await User.checkCredentials(email, password);
+//     if (user) {
+//       const { accessToken, refreshToken } = await JWTAuthenticate(user);
+//       res.send({ accessToken, refreshToken });
+//     } else {
+//       next(createError(401, "Credentials not valid!"));
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 // 8. LOUGOUT **************************************************************************************/
 export const logout = async (req, res, next) => {

@@ -3,6 +3,10 @@ import Client from "../schema/client.schema.js";
 import User from "../schema/user.schema.js";
 import { getTokens } from "../middlewares/login.middleware.js";
 
+// LOGIN
+// REFRESH
+// LOGOUT
+
 export const loginUser = async (req, res) => {
   const cookieAge = 48 * 60 * 60 * 1000;
   try {
@@ -65,5 +69,15 @@ export const refresh = async (req, res, next) => {
     res.status(204).send();
   } catch (error) {
     next(createError(500, error));
+  }
+};
+
+export const logout = async (req, res, next) => {
+  try {
+    req.session.destroy();
+    res.clearCookie("context", { httpOnly: true });
+    res.redirect(301, "/login");
+  } catch (error) {
+    next(error);
   }
 };

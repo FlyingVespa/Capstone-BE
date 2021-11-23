@@ -9,9 +9,6 @@ import Product from "../schema/product.schema.js";
 // 3. POST Create Single
 // 4. PUT Single
 // 5. DELETE Single
-// 6. REFRESH Token
-// 7. LOGIN Single
-// 8. LOUGOUT Single
 
 // 1. GET ALL **************************************************************************************/
 export const getAllProducts = async (req, res, next) => {
@@ -41,21 +38,10 @@ export const getSingleProduct = async (req, res, next) => {
 // 2. POST Single
 export const addNewProduct = async (req, res, next) => {
   try {
-    const businessId = req.body.businessId;
-    const user = await User.findById(businessId);
+    const userId = { url: req.params.userId };
+    const user = await User.findOne(userId);
     if (!user)
-      return next(createError(404, `User with id ${businessId} not found`));
-    // const { product, price, units, status, category, image, businessId } =
-    //   req.body;
-    // const newProductData = {
-    //   product: product,
-    //   price: price,
-    //   units: units,
-    //   status: status,
-    //   category: category,
-    //   image: image,
-    //   businessId: businessId, --- change name conflict
-    // };
+      return next(createError(404, `User with id ${userId} not found`));
     const newProductData = { ...req.body };
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();

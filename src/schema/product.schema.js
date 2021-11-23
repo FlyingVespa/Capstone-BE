@@ -12,6 +12,7 @@ const productSchema = new Schema(
     },
     product: notReqString,
     price: notReqString,
+    amount: notReqString,
     units: notReqString,
     status: notReqString,
     image: {
@@ -27,13 +28,11 @@ const productSchema = new Schema(
 productSchema.methods.toJSON = function () {
   const productDocument = this;
   const productObject = productDocument.toObject();
-  
-    productObject.id = productObject._id
-    delete productObject._id
+
+  productObject.id = productObject._id;
+  delete productObject._id;
   delete productObject.__v;
   return productObject;
 };
-
-
 
 export default model("Product", productSchema);

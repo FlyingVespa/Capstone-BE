@@ -36,12 +36,10 @@ export const getMe = async (req, res, next) => {
 
 export const getSingleUser = async (req, res, next) => {
   try {
-    const userId = req.params.userId;
-    const user = await User.findOne({ url: userId });
+    const userUrl = { url: req.params.userId };
+    const user = await User.findOne(userUrl);
     if (!user) {
-      return next(
-        createError(404, `User with ID: ${req.params.userId} not found`)
-      );
+      return next(createError(404, `User with ID: ${userUrl} not found`));
     } else {
       res.send(req.user);
     }
@@ -53,13 +51,13 @@ export const getSingleUser = async (req, res, next) => {
 // 4. UPDATE SINGLE **************************************************************************************/
 
 export const updateUser = async (req, res, next) => {
+  const userUrl = { url: req.params.userId };
   const update = { ...req.body, updatedAt: Date.now() };
   try {
-    const updatedUser = await User.findbyIDandUpdate(
-      req.params.userId,
-      update,
-      { new: true, runValidators: true }
-    );
+    const updatedUser = await User.findOne(userUrl, update, {
+      new: true,
+      runValidators: true,
+    });
     if (!updatedUser) {
       return next(createError(404, "User not found"));
     }
@@ -73,8 +71,9 @@ export const updateUser = async (req, res, next) => {
 
 // 5. DELETE SINGLE **************************************************************************************/
 export const deleteUser = async (req, res, next) => {
+  const userUrl = { url: req.params.userId };
   try {
-    await User.findByIdAndDelete(req.user._id);
+    await User.findOneAndDelete(userUrl);
     await req.user.deleteOne();
     res.status(204).send("Deleted");
   } catch (error) {
@@ -94,23 +93,6 @@ export const refreshToken = async (req, res, next) => {
     next(error);
   }
 };
-
-// 7. LOGIN **************************************************************************************/
-
-// export const login = async (req, res, next) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await User.checkCredentials(email, password);
-//     if (user) {
-//       const { accessToken, refreshToken } = await JWTAuthenticate(user);
-//       res.send({ accessToken, refreshToken });
-//     } else {
-//       next(createError(401, "Credentials not valid!"));
-//     }
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 // 8. LOUGOUT **************************************************************************************/
 export const logout = async (req, res, next) => {

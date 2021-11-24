@@ -40,8 +40,7 @@ export const getSingleClient = async (req, res, next) => {
 // 2. GET SINGLE with Auth **************************************************************************************/
 export const getMe = async (req, res, next) => {
   try {
-    console.log("test getMe");
-    res.send(req.client);
+    res.json(req.user);
   } catch (error) {
     next(error);
   }

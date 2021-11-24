@@ -5,12 +5,8 @@ import { getTokens, refreshTokens } from "../middlewares/login.middleware.js";
 import User from "../schema/user.schema.js";
 // 1. GET all
 // 2. GET Single
-// 3. POST Create Single
 // 4. PUT Single
 // 5. DELETE Single
-// 6. REFRESH Token
-// 7. LOGIN Single
-// 8. LOUGOUT Single
 
 // 1. GET ALL **************************************************************************************/
 export const getAllUsers = async (req, res, next) => {
@@ -36,12 +32,13 @@ export const getMe = async (req, res, next) => {
 
 export const getSingleUser = async (req, res, next) => {
   try {
-    const userUrl = { url: req.params.userId };
-    const user = await User.findOne(userUrl);
+    // const userUrl = { url: req.params.userId };
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
     if (!user) {
-      return next(createError(404, `User with ID: ${userUrl} not found`));
+      return next(createError(404, `User with ID: ${userId} not found`));
     } else {
-      res.send(req.user);
+      res.send(user);
     }
   } catch (error) {
     next(error);
@@ -51,10 +48,11 @@ export const getSingleUser = async (req, res, next) => {
 // 4. UPDATE SINGLE **************************************************************************************/
 
 export const updateUser = async (req, res, next) => {
-  const userUrl = { url: req.params.userId };
+  const userId = req.params.userId;
+  // const userUrl = { url: req.params.userId };
   const update = { ...req.body, updatedAt: Date.now() };
   try {
-    const updatedUser = await User.findOne(userUrl, update, {
+    const updatedUser = await User.findById(userId, update, {
       new: true,
       runValidators: true,
     });
@@ -71,35 +69,12 @@ export const updateUser = async (req, res, next) => {
 
 // 5. DELETE SINGLE **************************************************************************************/
 export const deleteUser = async (req, res, next) => {
-  const userUrl = { url: req.params.userId };
+  const userId = req.params.userId;
+  // const userUrl = { url: req.params.userId };
   try {
-    await User.findOneAndDelete(userUrl);
+    await User.findByIdAndDelete(userId);
     await req.user.deleteOne();
     res.status(204).send("Deleted");
-  } catch (error) {
-    next(error);
-  }
-};
-
-// 6. REFRESH TOKEN ************************************************************************************/
-export const refreshToken = async (req, res, next) => {
-  try {
-    const { actualRefreshToken } = req.body;
-    const { accessToken, refreshToken } = await refreshTokens(
-      actualRefreshToken
-    );
-    res.send({ accessToken, refreshToken });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// 8. LOUGOUT **************************************************************************************/
-export const logout = async (req, res, next) => {
-  try {
-    req.session.destroy();
-    res.clearCookie("context", { httpOnly: true });
-    res.redirect(301, "/login");
   } catch (error) {
     next(error);
   }

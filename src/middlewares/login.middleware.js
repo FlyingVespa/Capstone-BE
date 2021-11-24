@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../schema/user.schema.js";
 import Client from "../schema/client.schema.js";
-import CreateHttpError from "http-errors";
-
+import createError from "http-errors";
 const EXPIRE_10_MINUTES = "1000000";
 
 export const getTokens = async (user) => {
@@ -74,21 +73,15 @@ export const refreshTokens = async (actualRefreshToken) => {
 };
 
 export const loginMiddleware = async (req, res, next) => {
+  const token = req.cookies.accessToken;
+  if (!token) {
+    return res.sendStatus(403);
+  }
   try {
-    //const token = req.cookies.accessToken;
-    console.log(req.cookies.accessToken);
-    if (!req.cookies.accessToken) {
-      console.log(req.cookies.accessToken);
-      //  return next(createError(401, "Please provide credentials in cookies."));
-    }
-    const decodedToken = await verifyJWT(token);
-    // const user = await User.findById(decodedToken._id);
+    const { decodedToken } = await verifyJWT(token);
     const client = await Client.findById(decodedToken._id);
-    // if (!user && !client) return next(createError(404, "User not found."));
-    if (client) {
-      req.user = client;
-      next();
-    }
+    req.user = client;
+    next();
   } catch (error) {
     next(createError(401, "Invalid token"));
   }

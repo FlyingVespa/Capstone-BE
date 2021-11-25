@@ -4,8 +4,6 @@ import mongoose from "mongoose";
 import listEndpoints from "express-list-endpoints";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-// import corsConfig from "./settings/cors";
-import helmet from "helmet";
 import {
   unAuthorizedHandler,
   forbiddenErrHandler,
@@ -13,7 +11,7 @@ import {
   badReqErrHandler,
   notFoundErrHandler,
 } from "./errorHandlers.js";
-
+import corsConfig from "./settings/cors.js";
 import usersRouter from "./services/users.router.js";
 import clientsRouter from "./services/clients.router.js";
 import loginRouter from "./services/login.router.js";
@@ -37,23 +35,9 @@ server.listen(PORT, async () => {
 server.on("error", (error) =>
   console.log(`❌ Server is not running due to : ${error}`)
 );
-const trustOrigins = [process.env.FRONTEND_PROD_URL];
-
-const corsConfig = {
-  origin: function (origin, callback) {
-    if (!origin || trustOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Origin not allowed"));
-    }
-  },
-  credentials: true,
-};
 
 server.use(cors(corsConfig));
-
 server.use(express.json());
-server.use(helmet());
 server.use(cookieParser());
 
 // * ENDPOINTS ****************************************************************//
@@ -61,7 +45,7 @@ server.use(cookieParser());
 server.use("/register", registerRouter);
 server.use("/business", usersRouter);
 server.use("/profile", clientsRouter);
-server.use("/business/:userId/products", productsRouter);
+server.use("/business/:userId/", productsRouter);
 server.use("/auth", loginRouter);
 
 // server.get("/", (req, res) => {

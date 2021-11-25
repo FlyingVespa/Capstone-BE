@@ -21,11 +21,11 @@ export const loginUser = async (req, res) => {
         const { accessToken, refreshToken } = await getTokens(client);
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
-          // secure: process.env.NODE_ENV === "production",
         });
-        res.cookie("refreshToken", refreshToken),
-          // { httpOnly: true, secure: process.env.NODE_ENV === "production" };
-          res.status(200).send({ message: "Logged in successfully 😊 👌" });
+        res.cookie("refreshToken", refreshToken, { httpOnly: true });
+        res
+          .status(200)
+          .send({ message: "Logged in successfully  as CLIENT😊 👌" });
       } else {
         res.status(400).json({ error: "Invalid Client Password" });
       }
@@ -38,11 +38,13 @@ export const loginUser = async (req, res) => {
         const { accessToken, refreshToken } = await getTokens(user);
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
         });
-        res.cookie("refreshToken", refreshToken),
-          { httpOnly: true, secure: process.env.NODE_ENV === "production" };
-        res.status(200).send({ accessToken, refreshToken });
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+        });
+        res
+          .status(200)
+          .send({ message: "Logged in successfully as USER😊 👌" });
       } else {
         res.status(400).json({ error: "Invalid Client Password" });
       }

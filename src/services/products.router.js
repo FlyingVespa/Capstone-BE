@@ -1,17 +1,16 @@
 import express from "express";
-// import { JWTAuthenticate } from "../middlewares/login.middleware.js";
 import * as Controllers from "../controllers/products.control.js";
+import { loginMiddleware } from "../middlewares/login.middleware.js";
 import { isUnique } from "../middlewares/product.middlewares.js";
 const productsRouter = express.Router();
 
 productsRouter
-  .route("/")
-  .get(Controllers.getAllProducts) /*works*/
-  .post(isUnique, Controllers.addNewProduct);
+  .route("products/:productId")
+  .get(Controllers.getSingleProduct); /*works*/
 
 productsRouter
-  .route("/:productId")
-  .get(Controllers.getSingleProduct)
+  .route("/products")
+  .post(isUnique, Controllers.addNewProduct)
   .put(Controllers.updateProduct)
   .delete(Controllers.deleteProduct);
 

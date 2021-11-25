@@ -22,7 +22,7 @@ export const getAllUsers = async (req, res, next) => {
 
 export const getMe = async (req, res, next) => {
   try {
-    res.send(req.user);
+    res.json(req.user);
   } catch (error) {
     next(error);
   }

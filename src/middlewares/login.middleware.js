@@ -13,46 +13,13 @@ export const getTokens = async (user) => {
 };
 
 const generateJWT = (payload) =>
-  new Promise((resolve, reject) =>
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: "1w" },
-      (err, token) => {
-        if (err) reject(err);
-        resolve(token);
-      }
-    )
-  );
-
+  jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1w" });
 const generateRefreshJWT = (payload) =>
-  new Promise((resolve, reject) =>
-    jwt.sign(
-      payload,
-      process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "2w" },
-      (err, token) => {
-        if (err) reject(err);
-        resolve(token);
-      }
-    )
-  );
-export const verifyJWT = (token) => {
-  new Promise((resolve, reject) =>
-    jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
-      console.log(err, decodedToken);
-      if (err) reject(err);
-      resolve(decodedToken);
-    })
-  );
-};
+  jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: "2w" });
+
+export const verifyJWT = (token) => jwt.verify(token, process.env.JWT_SECRET);
 const verifyRefreshJWT = (token) =>
-  new Promise((resolve, reject) =>
-    jwt.verify(token, process.env.JWT_REFRESH_SECRET, (err, decodedToken) => {
-      if (err) reject(err);
-      resolve(decodedToken);
-    })
-  );
+  jwt.verify(token, process.env.JWT_REFRESH_SECRET);
 
 export const refreshTokens = async (actualRefreshToken) => {
   try {
@@ -78,11 +45,20 @@ export const loginMiddleware = async (req, res, next) => {
     return res.sendStatus(403);
   }
   try {
-    const { decodedToken } = await verifyJWT(token);
+    const decodedToken = await verifyJWT(token);
+    console.log({ decodedToken, token, cookies: req.cookies });
     const client = await Client.findById(decodedToken._id);
-    req.user = client;
-    next();
+    const user = await User.findById(decodedToken._id);
+
+    if (client) {
+      req.user = client;
+      next();
+    } else if (user) {
+      req.user = user;
+      next();
+    }
   } catch (error) {
+    console.log(error);
     next(createError(401, "Invalid token"));
   }
 };

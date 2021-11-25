@@ -41,22 +41,12 @@ export const getSingleProduct = async (req, res, next) => {
 // 2. POST Single
 export const addNewProduct = async (req, res, next) => {
   try {
-    const businessId = req.body.businessId;
-    const user = await User.findById(businessId);
-    if (!user)
-      return next(createError(404, `User with id ${businessId} not found`));
-    // const { product, price, units, status, category, image, businessId } =
-    //   req.body;
-    // const newProductData = {
-    //   product: product,
-    //   price: price,
-    //   units: units,
-    //   status: status,
-    //   category: category,
-    //   image: image,
-    //   businessId: businessId, --- change name conflict
-    // };
-    const newProductData = { ...req.body };
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(createError(404, `User with id ${userId} not found`));
+    }
+    const newProductData = { ...req.body, businessId: userId };
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();
 

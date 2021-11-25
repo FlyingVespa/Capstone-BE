@@ -1,11 +1,14 @@
-const whitelist = [process.env.FRONTEND_DEV_URL, process.env.FRONTEND_PROD_URL];
+const trustOrigins = [process.env.FRONTEND_PROD_URL];
 
-export const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || whitelist.indexOf(origin) !== -1) {
+const corsConfig = {
+  origin: function (origin, callback) {
+    if (!origin || trustOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by cors"));
+      callback(new Error("Origin not allowed"));
     }
   },
+  credentials: true,
 };
+
+export default corsConfig;

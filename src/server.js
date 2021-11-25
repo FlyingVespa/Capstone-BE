@@ -2,9 +2,8 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import listEndpoints from "express-list-endpoints";
-import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-
 import {
   unAuthorizedHandler,
   forbiddenErrHandler,
@@ -12,7 +11,7 @@ import {
   badReqErrHandler,
   notFoundErrHandler,
 } from "./errorHandlers.js";
-
+import corsConfig from "./settings/cors.js";
 import usersRouter from "./services/users.router.js";
 import clientsRouter from "./services/clients.router.js";
 import loginRouter from "./services/login.router.js";
@@ -37,18 +36,25 @@ server.on("error", (error) =>
   console.log(`❌ Server is not running due to : ${error}`)
 );
 
-server.use(cors());
-
+server.use(cors(corsConfig));
 server.use(express.json());
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(bodyParser.json());
+server.use(cookieParser());
 
 // * ENDPOINTS ****************************************************************//
+
 server.use("/register", registerRouter);
 server.use("/business", usersRouter);
 server.use("/profile", clientsRouter);
-server.use("/products", productsRouter);
-server.use("/login", loginRouter);
+server.use("/business", productsRouter);
+server.use("/auth", loginRouter);
+
+// server.get("/", (req, res) => {
+//   res.send("welcome to a simple HTTP cookie server");
+// });
+// server.get("/setcookie", (req, res) => {
+//   res.cookie(`Cookie token name`, `encrypted cookie string Value`);
+//   res.send("Cookie have been saved successfully");
+// });
 
 // * ERROR MIDDLEWARES ******************************************************//
 server.use(unAuthorizedHandler);

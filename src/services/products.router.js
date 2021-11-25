@@ -5,11 +5,11 @@ import { isUnique } from "../middlewares/product.middlewares.js";
 const productsRouter = express.Router();
 
 productsRouter
-  .route("products/:productId")
+  .route("/:userId/products/")
   .get(Controllers.getSingleProduct); /*works*/
 
 productsRouter
-  .route("/products")
+  .route("/:userId/products")
   .post(isUnique, Controllers.addNewProduct)
   .put(Controllers.updateProduct)
   .delete(Controllers.deleteProduct);

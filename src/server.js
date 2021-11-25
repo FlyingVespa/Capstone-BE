@@ -45,7 +45,7 @@ server.use(cookieParser());
 server.use("/register", registerRouter);
 server.use("/business", usersRouter);
 server.use("/profile", clientsRouter);
-server.use("/business/:userId/", productsRouter);
+server.use("/business", productsRouter);
 server.use("/auth", loginRouter);
 
 // server.get("/", (req, res) => {

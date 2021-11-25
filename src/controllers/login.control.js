@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import Client from "../schema/client.schema.js";
 import User from "../schema/user.schema.js";
 import { getTokens } from "../middlewares/login.middleware.js";
+import createError from "http-errors";
 
 // LOGIN
 // REFRESH
@@ -57,10 +58,17 @@ export const loginUser = async (req, res) => {
   }
 };
 
-export const userLogout = (req, res) => {
-  res.clearCookie("token");
+export const userLogout = async (req, res, next) => {
+  const user = req.user;
+  try {
+    await user.updateOne({ refreshToken: "" });
 
-  return res.redirect("/login");
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.sendStatus(204);
+  } catch (error) {
+    next(createError(500));
+  }
 };
 
 export const refresh = async (req, res, next) => {
@@ -82,12 +90,4 @@ export const refresh = async (req, res, next) => {
   }
 };
 
-export const logout = async (req, res, next) => {
-  try {
-    req.session.destroy();
-    res.clearCookie("context", { httpOnly: true });
-    res.redirect(301, "/login");
-  } catch (error) {
-    next(error);
-  }
-};
+export const logout = async (req, res, next) => {};

@@ -5,6 +5,6 @@ const loginRouter = express.Router();
 
 loginRouter.route("/login").post(Controllers.loginUser);
 loginRouter.route("/refreshToken").post(Controllers.refresh);
-loginRouter.route("/logout").post(Controllers.userLogout);
+loginRouter.route("/logout").get(Controllers.userLogout);
 
 export default loginRouter;

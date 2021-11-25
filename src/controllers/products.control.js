@@ -25,23 +25,25 @@ export const getAllProducts = async (req, res, next) => {
 // 2. GET Single
 
 export const getSingleProduct = async (req, res, next) => {
-  try {
-    const productId = req.params.productId;
-    const product = await Product.findById(productId);
-    if (product) {
-      res.send(product);
-    } else {
-      next(createError(404, `Product not found!`));
-    }
-  } catch (error) {
-    next(createError(500, "An error occurred while retrieving product "));
-  }
+  const productId = req.params.userId;
+  const product = await Product.find({ businessId: productId });
+  console.log(product);
+  res.send(product);
+  //   if (product) {
+  //     res.send(product);
+  //   } else {
+  //     next(createError(404, `Product not found!`));
+  //   }
+  // } catch (error) {
+  //   next(createError(500, "An error occurred while retrieving product "));
+  // }
 };
 
 // 2. POST Single
 export const addNewProduct = async (req, res, next) => {
   try {
     const userId = req.params.userId;
+    console.log(req.params);
     const user = await User.findById(userId);
     if (!user) {
       return next(createError(404, `User with id ${userId} not found`));

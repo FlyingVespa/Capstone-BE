@@ -62,10 +62,9 @@ export const userLogout = async (req, res, next) => {
   const user = req.user;
   try {
     await user.updateOne({ refreshToken: "" });
-
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
-    res.sendStatus(204);
+    res.status(200).json({ msg: " 🚫 Logged out successfully 🚫" });
   } catch (error) {
     next(createError(500));
   }

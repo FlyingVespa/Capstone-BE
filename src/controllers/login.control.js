@@ -1,8 +1,12 @@
+// libraries
 import bcrypt from "bcrypt";
-import Client from "../schema/client.schema.js";
-import User from "../schema/user.schema.js";
-import { getTokens } from "../middlewares/login.middleware.js";
 import createError from "http-errors";
+import User from "../schema/user.schema.js";
+
+// components
+import Client from "../schema/client.schema.js";
+import { getTokens } from "../middlewares/login.middleware.js";
+
 
 // LOGIN
 // REFRESH
@@ -26,35 +30,37 @@ export const loginUser = async (req, res) => {
         res.cookie("refreshToken", refreshToken, { httpOnly: true });
         res
           .status(200)
-          .send({ message: "Logged in successfully  as CLIENT😊 👌" });
+          .send(client.role);
       } else {
         res.status(400).json({ error: "Invalid Client Password" });
       }
+      return res.redirect("/profile/me")
     } else if (user && !client) {
       const validPassword = await bcrypt.compare(
         req.body.password,
         user.password
-      );
-      if (validPassword) {
-        const { accessToken, refreshToken } = await getTokens(user);
-        res.cookie("accessToken", accessToken, {
-          httpOnly: true,
-        });
-        res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-        });
-        res
+        );
+        if (validPassword) {
+          const { accessToken, refreshToken } = await getTokens(user);
+          res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+          });
+          res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+          });
+          res
           .status(200)
-          .send({ message: "Logged in successfully as USER😊 👌" });
-      } else {
-        res.status(400).json({ error: "Invalid Client Password" });
+          .send(user.role);
+        } else {
+          res.status(400).json({ error: "Invalid Client Password" });
+        }
+        return res.redirect("/profile/me")
+      } else if (!user && !client) {
+        res.status(404).json({ error: "User does not exist" });
       }
-    } else if (!user && !client) {
-      res.status(404).json({ error: "User does not exist" });
-    }
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send("Server Error");
+    } catch (error) {
+      console.log(error.message);
+    res.status(500).json({ error: "Server Error"});
   }
 };
 

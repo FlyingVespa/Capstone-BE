@@ -48,6 +48,11 @@ export const addNewProduct = async (req, res, next) => {
     if (!user) {
       return next(createError(404, `User with id ${userId} not found`));
     }
+    if(user){
+   
+const insertUser ={...user.toObject() ,updatedAt :new Date()}
+    }
+    const updateProduct = await Product.findByIdAndUpdate(req.product.id, {$push :{ businessId:insertUser._id )}},{new: true}
     const newProductData = { ...req.body, businessId: userId };
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();

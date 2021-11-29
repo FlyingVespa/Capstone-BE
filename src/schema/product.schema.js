@@ -5,7 +5,7 @@ const reqString = { type: String, required: false };
 const notReqString = { type: String, required: false };
 const productSchema = new Schema(
   {
-    businessId: [{ type : Schema.Types.ObjectId, ref: 'User', required: true}],
+    businessId: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
     product: notReqString,
     price: notReqString,
     amount: notReqString,
@@ -20,6 +20,16 @@ const productSchema = new Schema(
   },
   { timestamps: true }
 );
+
+productSchema.static("findProductByBusiness", async function (query) {
+  const total = await this.countDocuments(query);
+  const products = await this.find(query.criteria)
+    .limit(query.options.limit)
+    .skip(query.options.skip)
+    .sort(query.options.sort)
+    .populate({ path: "businessId", select: "_id" });
+  return { total, products };
+});
 
 productSchema.methods.toJSON = function () {
   const productDocument = this;

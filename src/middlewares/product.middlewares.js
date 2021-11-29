@@ -2,11 +2,10 @@ import Product from "../schema/product.schema.js";
 
 export const isUnique = async (req, res, next) => {
   try {
-    // const userId = await req.params.userId;
-    // const user = await User.findById()
+    const userId = await req.params.userId;
     let product = await Product.findOne({
-      businessId: req.body.businessId,
       product: req.body.product,
+      businessId: userId,
     });
     if (!product) {
       next();
@@ -21,3 +20,9 @@ export const isUnique = async (req, res, next) => {
     next(error);
   }
 };
+
+// export const hasBusinessId = async (req, res, next) => {
+//   try {
+
+//   }
+// }

@@ -7,11 +7,13 @@ const productsRouter = express.Router();
 productsRouter.route("/products").get(Controllers.getAllProducts);
 
 productsRouter
-
   .route("/:userId/products")
+  .get(Controllers.getAllUserProducts)
+  .post(isUnique, Controllers.addNewProduct);
 
-  .get(Controllers.getSingleProduct)
-  .post(isUnique, Controllers.addNewProduct)
+productsRouter
+  .route("/:userId/products/:productId")
+  .get(Controllers.getSingleUserProduct)
   .put(Controllers.updateProduct)
   .delete(Controllers.deleteProduct);
 

@@ -22,21 +22,26 @@ export const getAllProducts = async (req, res, next) => {
     next();
   }
 };
-// 2. GET Single
 
-export const getSingleProduct = async (req, res, next) => {
-  const productId = req.params.userId;
-  const product = await Product.find({ businessId: productId });
+// 1. GET ALL USER Product
+export const getAllUserProducts = async (req, res, next) => {
+  const userId = req.params.userId;
+  const product = await Product.find({
+    businessId: userId,
+  });
   console.log(product);
   res.send(product);
-  //   if (product) {
-  //     res.send(product);
-  //   } else {
-  //     next(createError(404, `Product not found!`));
-  //   }
-  // } catch (error) {
-  //   next(createError(500, "An error occurred while retrieving product "));
-  // }
+};
+// 2. GET Single USER PRODUCT
+export const getSingleUserProduct = async (req, res, next) => {
+  const userId = req.params.userId;
+  const productId = req.params.productId;
+  const product = await Product.findOne({
+    _id: productId,
+    businessId: userId,
+  });
+  console.log(product);
+  res.send(product);
 };
 
 // 2. POST Single
@@ -48,16 +53,12 @@ export const addNewProduct = async (req, res, next) => {
     if (!user) {
       return next(createError(404, `User with id ${userId} not found`));
     }
-    if(user){
-   
-const insertUser ={...user.toObject() ,updatedAt :new Date()}
-    }
-    const updateProduct = await Product.findByIdAndUpdate(req.product.id, {$push :{ businessId:insertUser._id )}},{new: true}
+
     const newProductData = { ...req.body, businessId: userId };
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();
 
-    res.status(201).send(createdProduct);
+    res.status(200).send(createdProduct);
   } catch (error) {
     if (error.name === "ValidationError") {
       next(createError(400, error));
@@ -96,7 +97,7 @@ export const deleteProduct = async (req, res, next) => {
 
     if (deletedProduct) {
       res
-        .status(204)
+        .status(201)
         .send(`🚮 Product with _id ${productId}, successfully deleted`);
     } else {
       next(createError(404, `productId with _id ${productId} not found!`));

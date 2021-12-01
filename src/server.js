@@ -22,10 +22,9 @@ import registerRouter from "./services/register.router.js";
 import productsRouter from "./services/products.router.js";
 import imgRouter from "./controllers/images.control.js";
 import { getCurrentFolderPath } from "./utils.js";
+import bodyParser from "body-parser";
 const { PORT, MONGODB_CONNECT } = process.env;
 const server = express();
-const publicFolderPath = join(getCurrentFolderPath(import.meta.url), "../public"
-
 
 server.listen(PORT, async () => {
   try {
@@ -45,6 +44,8 @@ server.on("error", (error) =>
 server.use(cors(corsConfig));
 server.use(express.json());
 server.use(cookieParser());
+server.use(express.urlencoded({ extended: false }));
+server.use(bodyParser.json());
 
 // * ENDPOINTS ****************************************************************//
 

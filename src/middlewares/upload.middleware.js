@@ -1,20 +1,24 @@
 import multer from "multer";
-import GridFsStorage from "multer-gridfs-storage";
+import { GridFsStorage } from "multer-gridfs-storage";
 
-const store = new GridFsStorage({
-  url: process.env.MONGODB_CONNECT,
+const storage = new GridFsStorage({
+  url: "mongodb+srv://flyingvespa:pizzaPasta403@capstone.wvfsf.mongodb.net/capstone",
   options: { useNewUrlParser: true, useUnifiedTopology: true },
-  file: (req, res) => {
-    const match = ["image/png", "image/jpeg", "image/gif", "image/jpg"];
+  file: (req, file) => {
+    const match = ["image/png", "image/jpeg"];
+
     if (match.indexOf(file.mimetype) === -1) {
-      const filename = `${Date.now()}-${file.originalname}`;
+      const filename = `${Date.now()}-any-name-${file.originalname}`;
       return filename;
     }
+
     return {
       bucketName: "photos",
-      filename: `${Date.now()}-${file.originalname}`,
+      filename: `${Date.now()}-any-name-${file.originalname}`,
     };
   },
 });
 
-export default multer({store})
+let upload = multer({ storage });
+
+export { upload };

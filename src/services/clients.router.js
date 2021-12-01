@@ -1,7 +1,7 @@
 import express from "express";
 import { loginMiddleware } from "../middlewares/login.middleware.js";
 import * as Controllers from "../controllers/clients.control.js";
-import { usersImgParser } from "../settings/cloudinary.js";
+// import { usersImgParser } from "../settings/cloudinary.js";
 
 const clientsRouter = express.Router();
 

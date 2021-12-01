@@ -20,9 +20,3 @@ export const isUnique = async (req, res, next) => {
     next(error);
   }
 };
-
-// export const hasBusinessId = async (req, res, next) => {
-//   try {
-
-//   }
-// }

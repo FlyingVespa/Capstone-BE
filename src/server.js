@@ -1,3 +1,6 @@
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -17,9 +20,12 @@ import clientsRouter from "./services/clients.router.js";
 import loginRouter from "./services/login.router.js";
 import registerRouter from "./services/register.router.js";
 import productsRouter from "./services/products.router.js";
-
+import imgRouter from "./controllers/images.control.js";
+import { getCurrentFolderPath } from "./utils.js";
 const { PORT, MONGODB_CONNECT } = process.env;
 const server = express();
+const publicFolderPath = join(getCurrentFolderPath(import.meta.url), "../public"
+
 
 server.listen(PORT, async () => {
   try {
@@ -47,14 +53,7 @@ server.use("/business", usersRouter);
 server.use("/profile", clientsRouter);
 server.use("/business", productsRouter);
 server.use("/auth", loginRouter);
-
-// server.get("/", (req, res) => {
-//   res.send("welcome to a simple HTTP cookie server");
-// });
-// server.get("/setcookie", (req, res) => {
-//   res.cookie(`Cookie token name`, `encrypted cookie string Value`);
-//   res.send("Cookie have been saved successfully");
-// });
+server.use("/", imgRouter);
 
 // * ERROR MIDDLEWARES ******************************************************//
 server.use(unAuthorizedHandler);

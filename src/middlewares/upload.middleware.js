@@ -2,7 +2,7 @@ import multer from "multer";
 import { GridFsStorage } from "multer-gridfs-storage";
 
 const storage = new GridFsStorage({
-  url: "mongodb+srv://flyingvespa:pizzaPasta403@capstone.wvfsf.mongodb.net/capstone",
+  url: process.env.MONGODB_CONNECT,
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
     const match = ["image/png", "image/jpeg"];

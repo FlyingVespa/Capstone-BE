@@ -5,9 +5,12 @@ import multer from "multer";
 const productStorage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
-    const user = req.user;
+    const user = req.params.userId;
     return {
-      folder: `capstone/products/${user._id}`,
+      folder: `capstone/products/${user}`,
+      public_id: (req, file) => {
+        file.orginalname;
+      },
     };
   },
 });

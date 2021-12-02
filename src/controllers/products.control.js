@@ -129,12 +129,8 @@ export const deleteProduct = async (req, res, next) => {
 export const uploadProductImage = async (req, res, next) => {
   try {
     const productId = req.params.productId;
-    let image;
-    if (req.body.url) {
-      image = req.body.url;
-    } else {
-      image = req.file.path;
-    }
+    let image = req.file.path;
+
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
       { image: image },

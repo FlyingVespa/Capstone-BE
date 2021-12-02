@@ -44,8 +44,8 @@ server.on("error", (error) =>
 server.use(cors(corsConfig));
 server.use(express.json());
 server.use(cookieParser());
-server.use(express.urlencoded({ extended: false }));
-server.use(bodyParser.json());
+//server.use(express.urlencoded({ extended: false }));
+//server.use(express.json());
 
 // * ENDPOINTS ****************************************************************//
 
@@ -54,7 +54,7 @@ server.use("/business", usersRouter);
 server.use("/profile", clientsRouter);
 server.use("/business", productsRouter);
 server.use("/auth", loginRouter);
-server.use("/", imgRouter);
+server.use("/images", imgRouter);
 
 // * ERROR MIDDLEWARES ******************************************************//
 server.use(unAuthorizedHandler);

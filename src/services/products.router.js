@@ -5,6 +5,7 @@ import { isUnique } from "../middlewares/product.middlewares.js";
 // import { test } from "../settings/cloudinary";
 // import { v2 as cloudinary } from "cloudinary";
 // import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { productImgParser } from "../settings/cloudinary.js";
 import multer from "multer";
 
 const productsRouter = express.Router();
@@ -19,7 +20,8 @@ productsRouter
 productsRouter
   .route("/:userId/products/:productId")
   .get(Controllers.getSingleUserProduct)
-  .put(Controllers.updateProduct)
-  .delete(Controllers.deleteProduct);
+  // .put(Controllers.updateProduct)
+  .delete(Controllers.deleteProduct)
+  .post(productImgParser.single("image"), Controllers.uploadProductImage);
 
 export default productsRouter;

@@ -109,77 +109,44 @@ export const deleteProduct = async (req, res, next) => {
   }
 };
 
-// export const uploadProductImage = async (req, res, next) => {
+// export const uploadUserImage = async (req, res, next) => {
+//   const update = { image: req.file.path };
 //   try {
-//     let image;
-//     if (req.body.url) {
-//       image = req.body.url;
-//     } else {
-//       image = req.file.path;
-//     }
-//     const updatedProduct = await Product.findByIdAndUpdate(
-//       req.params.productId,
-//       { image: image },
-//       { new: true }
+//     const updatedUser = await UserModel.findByIdAndUpdate(
+//       req.params.userId,
+//       update,
+//       { new: true, runValidators: true }
 //     );
-//     if (!updatedProduct)
+//     if (!updatedUser)
 //       return next(
-//         createError(404, `Product with id ${req.params.productId} not found`)
+//         createError(404, `User with id ${req.params.userId} not found.`)
 //       );
-//     res.json(updatedProduct);
+//     res.json({ ok: true, message: `User updated successfully` });
 //   } catch (error) {
-//     next(error);
-//   }
-// };
-
-// const storage = multer.diskStorage({
-//   destination: function (req, res, callback) {
-//     callback(null, "./public/uploads/images");
-//   },
-
-//   filename: function (req, file, callback) {
-//     callback(null, Date.now() + file.originalname);
-//   },
-// });
-// const upload = multer({
-//   storage: storage,
-//   limit: {
-//     fieldSize: 1024 * 1024 * 3,
-//   },
-// });
-// let gfs;
-// export const getFile = async (req, res) => {
-//   try {
-//     const file = await gfs.files.findOne({ filename: req.params.filename });
-//     const readStream = gfs.createReadStream(file.filename);
-//     readStream.pipe(res);
-//   } catch (error) {
-//     res.send("not found");
-//   }
-// };
-
-// export const deleteFile = async () => {
-//   try {
-//     await gfs.files.deleteOne({ filename: req.params.filename });
-//     res.send("sucesss");
-//   } catch (error) {
-//     console.log("An error occured");
+//     next(createError(500, error));
 //   }
 // };
 export const uploadProductImage = async (req, res, next) => {
-  const update = { image: req.file.path };
   try {
-    const updatedUser = await Product.findByIdAndUpdate(
-      req.params.productId,
-      update,
-      { new: true, runValidators: true }
+    const productId = req.params.productId;
+    let image;
+    if (req.body.url) {
+      image = req.body.url;
+    } else {
+      image = req.file.path;
+    }
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      { image: image },
+      {
+        new: true,
+        runValidators: true,
+      }
     );
-    if (!updatedUser)
-      return next(
-        createError(404, `User with id ${req.params.productId} not found.`)
-      );
-    res.json({ ok: true, message: `User updated successfully` });
+    if (!updatedProduct)
+      return next(createError(404, `Post with id ${productId} not found`));
+    res.json(updatedProduct);
   } catch (error) {
-    next(createError(500, error));
+    next(error);
   }
 };

@@ -1,16 +1,15 @@
 import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
+// import { CloudinaryStorage } from "multer-storage-cloudinary";
+import multerCloudinary from "multer-storage-cloudinary";
 import multer from "multer";
-
+const { CloudinaryStorage } = multerCloudinary;
 const productStorage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
     const user = req.params.userId;
     return {
       folder: `capstone/products/${user}`,
-      public_id: (req, file) => {
-        file.orginalname;
-      },
+      public_id: Date.now() + file.orginalname,
     };
   },
 });

@@ -11,6 +11,7 @@ const productSchema = new Schema(
     amount: notReqString,
     units: notReqString,
     status: notReqString,
+    cloudinary_id: notReqString,
     image: {
       ...notReqString,
       default: () => {

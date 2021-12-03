@@ -4,8 +4,9 @@ import path, { dirname, extname } from "path";
 import multer from "multer";
 import User from "../schema/user.schema.js";
 import Product from "../schema/product.schema.js";
-// import { pipeline, Readable } from "stream";
-// import { Transform } from "json2csv";
+import cloudinary from "cloudinary";
+import { productImgParser } from "../settings/cloudinary.js";
+
 // 1. GET all
 // 2. GET Single
 // 3. POST Create Single
@@ -48,15 +49,31 @@ export const getSingleUserProduct = async (req, res, next) => {
 
 // 2. POST Single
 export const addNewProduct = async (req, res, next) => {
+  const userId = req.params.userId;
   try {
-    const userId = req.params.userId;
+    let image;
+    if (req.body.url) {
+      image = req.body.url;
+    } else {
+      image = req.file.path;
+    }
+    const result = await cloudinary.v2.uploader.upload(image, {
+      folder: `capstone/products/${userId}`,
+    });
     console.log(req.params);
+    console.log(result);
     const user = await User.findById(userId);
     if (!user) {
       return next(createError(404, `User with id ${userId} not found`));
     }
+    ``;
 
-    const newProductData = { ...req.body, businessId: userId };
+    const newProductData = {
+      ...req.body,
+      businessId: userId,
+      image: result.url,
+      cloudinary_id: result.public_id,
+    };
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();
 
@@ -71,17 +88,32 @@ export const addNewProduct = async (req, res, next) => {
 };
 
 //  PUT
+
 export const updateProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
-    const updatedProduct = await Product.findByIdAndUpdate(
-      productId,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const product = await Product.findById(productId);
+    const userId = await product.businessId;
+    let test = await cloudinary.v2.uploader.destroy(product.cloudinary_id);
+    console.log(test);
+    let image;
+    if (req.body.url) {
+      image = req.body.url;
+    } else {
+      image = req.file.path;
+    }
+    const result = await cloudinary.v2.uploader.upload(image, {
+      folder: `capstone/products/${userId}`,
+    });
+    const data = {
+      ...req.body,
+      cloudinary_id: result.public_id,
+    };
+
+    const updatedProduct = await Product.findByIdAndUpdate(productId, data, {
+      new: true,
+      runValidators: true,
+    });
     if (updatedProduct) {
       res.send(`🛠️ Updated successfully 🛠️ ${updatedProduct}`);
     } else {
@@ -95,8 +127,11 @@ export const updateProduct = async (req, res, next) => {
 export const deleteProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
-    const deletedProduct = await Product.findByIdAndDelete(productId);
+    const product = await Product.findById(productId);
 
+    await cloudinary.v2.uploader.destroy(product.cloudinary_id);
+
+    const deletedProduct = await Product.findByIdAndDelete(productId);
     if (deletedProduct) {
       res
         .status(201)
@@ -104,44 +139,6 @@ export const deleteProduct = async (req, res, next) => {
     } else {
       next(createError(404, `productId with _id ${productId} not found!`));
     }
-  } catch (error) {
-    next(error);
-  }
-};
-
-// export const uploadUserImage = async (req, res, next) => {
-//   const update = { image: req.file.path };
-//   try {
-//     const updatedUser = await UserModel.findByIdAndUpdate(
-//       req.params.userId,
-//       update,
-//       { new: true, runValidators: true }
-//     );
-//     if (!updatedUser)
-//       return next(
-//         createError(404, `User with id ${req.params.userId} not found.`)
-//       );
-//     res.json({ ok: true, message: `User updated successfully` });
-//   } catch (error) {
-//     next(createError(500, error));
-//   }
-// };
-export const uploadProductImage = async (req, res, next) => {
-  try {
-    const productId = req.params.productId;
-    let image = req.file.path;
-
-    const updatedProduct = await Product.findByIdAndUpdate(
-      productId,
-      { image: image },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    if (!updatedProduct)
-      return next(createError(404, `Post with id ${productId} not found`));
-    res.json(updatedProduct);
   } catch (error) {
     next(error);
   }

@@ -15,13 +15,12 @@ productsRouter.route("/products").get(Controllers.getAllProducts);
 productsRouter
   .route("/:userId/products")
   .get(Controllers.getAllUserProducts)
-  .post(isUnique, Controllers.addNewProduct);
+  .post(isUnique, productImgParser.single("image"), Controllers.addNewProduct);
 
 productsRouter
   .route("/:userId/products/:productId")
   .get(Controllers.getSingleUserProduct)
-  // .put(Controllers.updateProduct)
-  .delete(Controllers.deleteProduct)
-  .post(productImgParser.single("image"), Controllers.uploadProductImage);
+  .put(productImgParser.single("image"), Controllers.updateProduct)
+  .delete(Controllers.deleteProduct);
 
 export default productsRouter;

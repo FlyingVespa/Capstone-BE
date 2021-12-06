@@ -20,9 +20,6 @@ import clientsRouter from "./services/clients.router.js";
 import loginRouter from "./services/login.router.js";
 import registerRouter from "./services/register.router.js";
 import productsRouter from "./services/products.router.js";
-import imgRouter from "./controllers/images.control.js";
-import { getCurrentFolderPath } from "./utils.js";
-import bodyParser from "body-parser";
 const { PORT, MONGODB_CONNECT } = process.env;
 const server = express();
 
@@ -54,7 +51,6 @@ server.use("/business", usersRouter);
 server.use("/profile", clientsRouter);
 server.use("/business", productsRouter);
 server.use("/auth", loginRouter);
-server.use("/images", imgRouter);
 
 // * ERROR MIDDLEWARES ******************************************************//
 server.use(unAuthorizedHandler);

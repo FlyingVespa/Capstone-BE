@@ -9,7 +9,6 @@ const productStorage = new CloudinaryStorage({
     const user = req.params.userId;
     return {
       folder: `capstone/products/${user}`,
-      public_id: Date.now() + file.orginalname,
     };
   },
 });

@@ -5,7 +5,7 @@ const reqString = { type: String, required: false };
 const notReqString = { type: String, required: false };
 const productSchema = new Schema(
   {
-    businessId: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
+    businessId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     product: notReqString,
     price: notReqString,
     amount: notReqString,

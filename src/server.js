@@ -1,6 +1,5 @@
 import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-
+import bodyParser from "body-parser";
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -41,8 +40,8 @@ server.on("error", (error) =>
 server.use(cors(corsConfig));
 server.use(express.json());
 server.use(cookieParser());
-//server.use(express.urlencoded({ extended: false }));
-//server.use(express.json());
+server.use(bodyParser.json());
+server.use(bodyParser.urlencoded({ extended: true }));
 
 // * ENDPOINTS ****************************************************************//
 

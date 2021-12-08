@@ -63,10 +63,13 @@ export const addNewProduct = async (req, res, next) => {
       });
     }
 
-    console.log(req.params);
-    console.log(result);
+    console.log(req.body);
 
     const newProductData = {
+      // product: req.body.product,
+      // amount: req.body?.amount || "",
+      // untis: req.body?.units || "",
+      // price: req.body?.price || "",
       ...req.body,
       businessId: userId,
       image:

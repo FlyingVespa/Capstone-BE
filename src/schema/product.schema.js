@@ -1,21 +1,21 @@
 import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
-const reqString = { type: String, required: false };
+const reqString = { type: String, required: true };
 const notReqString = { type: String, required: false };
 const productSchema = new Schema(
   {
     businessId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    product: notReqString,
+    product: {type: String, required: true},
     price: notReqString,
-    amount: notReqString,
+    desc: notReqString,
     units: notReqString,
     status: notReqString,
     cloudinary_id: notReqString,
     image: {
       ...notReqString,
       default: () => {
-        return `https://eu.ui-avatars.com/api/?name=product`;
+        return `https://eu.ui-avatars.com/api/?name=${product}`;
       },
     },
   },

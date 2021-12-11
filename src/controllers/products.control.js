@@ -92,13 +92,11 @@ export const addNewProduct = async (req, res, next) => {
 export const updateProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
-    console.log("productId", productId);
     const product = await Product.findById(productId);
-    console.log("product", product);
     const userId = await product.businessId;
-    console.log("userId", userId);
     let result;
-    let destroy;
+    let image = "";
+    let cloud_id = "";
     try {
       if (
         product.cloudinary_id !== "" &&
@@ -106,33 +104,29 @@ export const updateProduct = async (req, res, next) => {
         product.cloudinary_id !== undefined
       ) {
         console.log("dont call", product.cloudinary_id);
-        destroy = await cloudinary.v2.uploader.destroy(product.cloudinary_id);
-        console.log("destroy", destroy);
+        await cloudinary.v2.uploader.destroy(product.cloudinary_id);
       }
-    } catch (error) {
-      console.log(error);
-      throw new Error(3000);
-    }
-    if (req.file !== undefined && req.file.path !== undefined) {
-      result = await cloudinary.v2.uploader.upload(req.file.path, {
-        folder: `capstone/products/${userId}`,
-      });
-      console.log("result", result);
-    }
 
-    let image = "";
-    let cloud_id = "";
-    if (
-      result !== undefined &&
-      result.url !== undefined &&
-      result.public_id !== undefined
-    ) {
-      image = result.url;
-      cloud_id = result.public_id;
-    } else if (req.body !== undefined && req.body.image !== undefined) {
-      image = req.body.image;
-      cloud_id = "none";
-    }
+      if (req.file !== undefined && req.file.path !== undefined) {
+        result = await cloudinary.v2.uploader.upload(req.file.path, {
+          folder: `capstone/products/${userId}`,
+        });
+        console.log("result", result);
+      }
+
+      if (
+        result !== undefined &&
+        result.url !== undefined &&
+        result.public_id !== undefined
+      ) {
+        image = result.url;
+        cloud_id = result.public_id;
+      } else if (req.body !== undefined && req.body.image !== undefined) {
+        image = req.body.image;
+        cloud_id = "none";
+      }
+    } catch (error) {}
+
     const data = {
       ...req.body,
       image: image,
@@ -156,8 +150,16 @@ export const deleteProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
     const product = await Product.findById(productId);
-
-    await cloudinary.v2.uploader.destroy(product.cloudinary_id);
+    if (
+      product.cloudinary_id !== "" &&
+      product.cloudinary_id !== "none" &&
+      product.cloudinary_id !== undefined
+    ) {
+      console.log("dont call", product.cloudinary_id);
+      await cloudinary.v2.uploader.destroy(product.cloudinary_id);
+      // console.log("destroy", destroy);
+    }
+    // await cloudinary.v2.uploader.destroy(product.cloudinary_id);
 
     const deletedProduct = await Product.findByIdAndDelete(productId);
     if (deletedProduct) {

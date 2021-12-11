@@ -10,7 +10,8 @@ import multer from "multer";
 
 const productsRouter = express.Router();
 
-productsRouter.route("/products").get(Controllers.getAllProducts);
+// productsRouter.route("/products").get(Controllers.getAllProducts);
+productsRouter.route("/me/products");
 
 productsRouter
   .route("/:userId/products")
@@ -18,9 +19,10 @@ productsRouter
   .post(isUnique, productImgParser.single("image"), Controllers.addNewProduct);
 
 productsRouter
-  .route("/:userId/products/:productId")
+  .route("/me/products/:productId")
   .get(Controllers.getSingleUserProduct)
   .put(productImgParser.single("image"), Controllers.updateProduct)
+
   .delete(Controllers.deleteProduct);
 
 export default productsRouter;

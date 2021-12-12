@@ -66,7 +66,13 @@ export const addNewProduct = async (req, res, next) => {
     console.log(req.body);
 
     const newProductData = {
+      // let {product, units, price, stocklevel, desc} = req.body
       ...req.body,
+      // product: product,
+      // price: price,
+      // units: units,
+      // stocklevel: stocklevel,
+      // desc : desc,
       businessId: userId,
       image:
         result?.url ||

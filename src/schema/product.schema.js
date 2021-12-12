@@ -10,7 +10,7 @@ const productSchema = new Schema(
     price: notReqString,
     desc: notReqString,
     units: notReqString,
-    status: notReqString,
+    stocklevel: notReqString,
     cloudinary_id: notReqString,
     image: {
       ...notReqString,

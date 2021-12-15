@@ -5,7 +5,7 @@ const reqString = { type: String, required: true };
 const notReqString = { type: String, required: false };
 const productSchema = new Schema(
   {
-    businessId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    businessId: { type:  mongoose.SchemaTypes.ObjectId, ref: "User", required: true },
     product: {type: String, required: true},
     price: notReqString,
     desc: notReqString,

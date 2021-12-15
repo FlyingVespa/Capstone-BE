@@ -54,7 +54,6 @@ export const addNewProduct = async (req, res, next) => {
   if (!user) {
     return next(createError(404, `User with id ${userId} not found`));
   }
-
   try {
     let result;
     if (req.file !== undefined && req.file.path !== undefined) {
@@ -62,17 +61,9 @@ export const addNewProduct = async (req, res, next) => {
         folder: `capstone/products/${userId}`,
       });
     }
-
     console.log(req.body);
-
     const newProductData = {
-      // let {product, units, price, stocklevel, desc} = req.body
       ...req.body,
-      // product: product,
-      // price: price,
-      // units: units,
-      // stocklevel: stocklevel,
-      // desc : desc,
       businessId: userId,
       image:
         result?.url ||
@@ -97,54 +88,56 @@ export const addNewProduct = async (req, res, next) => {
 
 export const updateProduct = async (req, res, next) => {
   try {
-    const productId = req.params.productId;
-    const product = await Product.findById(productId);
-    const userId = await product.businessId;
-    let result;
-    let image = "";
-    let cloud_id = "";
-    try {
-      if (
-        product.cloudinary_id !== "" &&
-        product.cloudinary_id !== "none" &&
-        product.cloudinary_id !== undefined
-      ) {
-        console.log("dont call", product.cloudinary_id);
-        await cloudinary.v2.uploader.destroy(product.cloudinary_id);
-      }
+    const product = await Product.findById(req.params.productId);
 
-      if (req.file !== undefined && req.file.path !== undefined) {
-        result = await cloudinary.v2.uploader.upload(req.file.path, {
-          folder: `capstone/products/${userId}`,
-        });
-        console.log("result", result);
-      }
+    if (
+      req.file !== undefined &&
+      req.file.path !== undefined &&
+      product.cloudinary_id !== null &&
+      product.cloudinary_id !== undefined &&
+      product.cloudinary_id !== ""
+    ) {
+      await cloudinary.v2.uploader.destroy(product.cloudinary_id);
+    }
 
-      if (
-        result !== undefined &&
-        result.url !== undefined &&
-        result.public_id !== undefined
-      ) {
-        image = result.url;
-        cloud_id = result.public_id;
-      } else if (req.body !== undefined && req.body.image !== undefined) {
-        image = req.body.image;
-        cloud_id = "none";
-      }
-    } catch (error) {}
+    if (req.file !== undefined && req.file.path !== undefined) {
+      let result = await cloudinary.v2.uploader.upload(req.file.path, {
+        folder: `capstone/products/${req.params.userId}`,
+      });
+      const data = {
+        ...req.body,
+        product: req.body.product || product.product,
+        image: result.secure_url || product.image,
+        cloudinary_id: result.public_id || product.cloudinary_id || "",
+      };
+      const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.productId,
+        data,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
 
-    const data = {
-      ...req.body,
-      image: image,
-      cloudinary_id: cloud_id,
-    };
-    const updatedProduct = await Product.findByIdAndUpdate(productId, data, {
-      new: true,
-    });
-    if (updatedProduct) {
-      res.send(`🛠️ Updated successfully 🛠️ ${updatedProduct}`);
-    } else {
-      next(createError(404, `Product with _id ${productId} not found!`));
+      if (req.file== undefined || req.file.path == undefined) {
+        const data = {
+          ...req.body,
+        };
+        const updatedProduct = await Product.findByIdAndUpdate(
+          req.params.productId,
+          data,
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+
+        if (updatedProduct) {
+          res.send(`🛠️ Updated successfully 🛠️ ${updatedProduct}`);
+        } else {
+          next(createError(404, `Product with _id ${productId} not found!`));
+        }
+      }
     }
   } catch (error) {
     console.log(error);

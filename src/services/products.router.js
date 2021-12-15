@@ -1,7 +1,10 @@
 import express from "express";
 import * as Controllers from "../controllers/products.control.js";
 import { loginMiddleware } from "../middlewares/login.middleware.js";
-import { isUnique, verifyIfUnique } from "../middlewares/product.middlewares.js";
+import {
+  isUnique,
+  verifyIfUnique,
+} from "../middlewares/product.middlewares.js";
 
 import { productImgParser } from "../settings/cloudinary.js";
 import multer from "multer";
@@ -14,14 +17,13 @@ productsRouter
   .route("/:userId/products")
   .get(Controllers.getAllUserProducts)
   .post(isUnique, productImgParser.single("image"), Controllers.addNewProduct);
-  
-  productsRouter
+
+productsRouter
   .route("/:userId/products/:productId")
-  .put(verifyIfUnique, productImgParser.single("image"), Controllers.updateProduct)
+  .patch(productImgParser.single("image"), Controllers.updateProduct)
   .get(Controllers.getSingleUserProduct)
   .delete(Controllers.deleteProduct);
-  
-  productsRouter
-  .route("/me/products/:productId")
+
+productsRouter.route("/me/products/:productId");
 
 export default productsRouter;

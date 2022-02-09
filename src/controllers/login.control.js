@@ -24,12 +24,10 @@ export const loginUser = async (req, res) => {
           httpOnly: true,
         });
         res.cookie("refreshToken", refreshToken, { httpOnly: true });
-        res
-          .status(200)
-          .send({
-            message: "Logged in successfully  as CLIENT😊 👌",
-            role: "client",
-          });
+        res.status(200).send({
+          message: "Logged in successfully  as CLIENT😊 👌",
+          role: "client",
+        });
       } else {
         res.status(400).json({ error: "Invalid Client Password" });
       }
@@ -46,12 +44,10 @@ export const loginUser = async (req, res) => {
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
         });
-        res
-          .status(200)
-          .send({
-            message: "Logged in successfully as USER😊 👌",
-            role: "user",
-          });
+        res.status(200).send({
+          message: "Logged in successfully as USER😊 👌",
+          role: "user",
+        });
       } else {
         res.status(400).json({ error: "Invalid Client Password" });
       }
@@ -65,14 +61,20 @@ export const loginUser = async (req, res) => {
 };
 
 export const userLogout = async (req, res, next) => {
+  debugger;
+  console.log("debug logout 1");
   const user = req.user;
   try {
-    await user.updateOne({ refreshToken: "" });
+    // await user.updateOne({ refreshToken: "" });
 
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
-    res.sendStatus(204);
+    req.session.destroy(function (err) {
+      res.redirect("/");
+    });
+    // res.clearCookie("accessToken");
+    // res.clearCookie("refreshToken");
+    // res.sendStatus(204);
   } catch (error) {
+    console.log("debug error", error);
     next(createError(500));
   }
 };

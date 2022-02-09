@@ -26,7 +26,10 @@ export const loginUser = async (req, res) => {
         res.cookie("refreshToken", refreshToken, { httpOnly: true });
         res
           .status(200)
-          .send({ message: "Logged in successfully  as CLIENT😊 👌" });
+          .send({
+            message: "Logged in successfully  as CLIENT😊 👌",
+            role: "client",
+          });
       } else {
         res.status(400).json({ error: "Invalid Client Password" });
       }
@@ -45,7 +48,10 @@ export const loginUser = async (req, res) => {
         });
         res
           .status(200)
-          .send({ message: "Logged in successfully as USER😊 👌" });
+          .send({
+            message: "Logged in successfully as USER😊 👌",
+            role: "user",
+          });
       } else {
         res.status(400).json({ error: "Invalid Client Password" });
       }

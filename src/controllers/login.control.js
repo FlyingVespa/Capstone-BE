@@ -67,12 +67,12 @@ export const userLogout = async (req, res, next) => {
   try {
     // await user.updateOne({ refreshToken: "" });
 
-    req.session.destroy(function (err) {
-      res.redirect("/");
-    });
-    // res.clearCookie("accessToken");
-    // res.clearCookie("refreshToken");
-    // res.sendStatus(204);
+    // req.session.destroy(function (err) {
+    //   res.redirect("/");
+    // });
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.sendStatus(204);
   } catch (error) {
     console.log("debug error", error);
     next(createError(500));

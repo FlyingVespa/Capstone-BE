@@ -27,6 +27,11 @@ const userSchema = new Schema(
     location: {
       lat: notReqString,
       lon: notReqString,
+      street_number: notReqString,
+      street_name: notReqString,
+      city: notReqString,
+      state: notReqString,
+      country: notReqString,
     },
     contact: {
       pub_email: notReqString,

@@ -24,15 +24,19 @@ const userSchema = new Schema(
       match: [/.+\@.+\..+/, "Not a valid email"],
       // validate: [isEmail, "Please enter valid email"],
     },
-    address: notReqString,
-    location: {
+
+    address: {
       lat: notReqString,
-      lon: notReqString,
+      lng: notReqString,
       street_number: notReqString,
       street_name: notReqString,
       city: notReqString,
       state: notReqString,
       country: notReqString,
+    },
+    coords: {
+      lat: notReqString,
+      lng: notReqString,
     },
     contact: {
       pub_email: notReqString,

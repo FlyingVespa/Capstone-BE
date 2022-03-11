@@ -6,7 +6,6 @@ const { Schema, model } = mongoose;
 const reqString = { type: String, required: false };
 const notReqString = { type: String, required: false };
 const reqBoolean = { type: Boolean };
-const number = { type: Number };
 
 const userSchema = new Schema(
   {
@@ -47,56 +46,48 @@ const userSchema = new Schema(
       twitter: notReqString,
     },
 
-    times: [
-      {
-        day: number,
+    times: {
+      monday: {
         trading: reqBoolean,
         open: notReqString,
         closed: notReqString,
       },
-      {
-        day: number,
+      tuesday: {
         trading: reqBoolean,
         open: notReqString,
         closed: notReqString,
       },
-      {
-        day: number,
+      wednesday: {
         trading: reqBoolean,
         open: notReqString,
         closed: notReqString,
       },
-      {
-        day: number,
+      thursday: {
         trading: reqBoolean,
         open: notReqString,
         closed: notReqString,
       },
-      {
-        day: number,
+      friday: {
         trading: reqBoolean,
         open: notReqString,
         closed: notReqString,
       },
-      {
-        day: number,
+      saturday: {
         trading: reqBoolean,
         open: notReqString,
         closed: notReqString,
       },
-      {
-        day: number,
+      sunday: {
         trading: reqBoolean,
         open: notReqString,
         closed: notReqString,
       },
-      {
-        day: number,
+      public: {
         trading: reqBoolean,
         open: notReqString,
         closed: notReqString,
       },
-    ],
+    },
     services: [String],
     bio: notReqString,
     shipping: reqBoolean,

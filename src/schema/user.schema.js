@@ -10,11 +10,6 @@ const reqBoolean = { type: Boolean };
 const userSchema = new Schema(
   {
     role: notReqString,
-    password: reqString,
-    businessname: reqString,
-    category: notReqString,
-    username: reqString,
-    url: { type: String, required: true, unique: true },
     email: {
       type: String,
       lowercase: true,
@@ -23,87 +18,76 @@ const userSchema = new Schema(
       match: [/.+\@.+\..+/, "Not a valid email"],
       // validate: [isEmail, "Please enter valid email"],
     },
-    address: notReqString,
-    location: {
+    password: reqString,
+    url: notReqString,
+    businessname: reqString,
+    category: notReqString,
+    username: notReqString,
+    address: {
       lat: notReqString,
-      lon: notReqString,
+      lng: notReqString,
       street_number: notReqString,
       street_name: notReqString,
       city: notReqString,
       state: notReqString,
       country: notReqString,
     },
-    contact: {
-      pub_email: notReqString,
-      tel: notReqString,
-      cell: reqString,
-      insta: notReqString,
-      whatsapp: notReqString,
-      twitter: notReqString,
+    companydetails: {
+      bio: notReqString,
+      mobile: notReqString,
+      public_email: notReqString,
+      store_services: { type: Array },
+      shipping: notReqString,
     },
+    tradingtimes: [
+      {
+        day: notReqString,
+        trading: reqBoolean,
+        open: notReqString,
+        closed: notReqString,
+      },
+      {
+        day: notReqString,
+        trading: reqBoolean,
+        open: notReqString,
+        closed: notReqString,
+      },
+      {
+        day: notReqString,
+        trading: reqBoolean,
+        open: notReqString,
+        closed: notReqString,
+      },
+      {
+        day: notReqString,
+        trading: reqBoolean,
+        open: notReqString,
+        closed: notReqString,
+      },
+      {
+        day: notReqString,
+        trading: reqBoolean,
+        open: notReqString,
+        closed: notReqString,
+      },
+      {
+        day: notReqString,
+        trading: reqBoolean,
+        open: notReqString,
+        closed: notReqString,
+      },
+      {
+        day: notReqString,
+        trading: reqBoolean,
+        open: notReqString,
+        closed: notReqString,
+      },
+    ],
 
-    times: {
-      monday: {
-        trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
-      },
-      tuesday: {
-        trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
-      },
-      wednesday: {
-        trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
-      },
-      thursday: {
-        trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
-      },
-      friday: {
-        trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
-      },
-      saturday: {
-        trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
-      },
-      sunday: {
-        trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
-      },
-      public: {
-        trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
-      },
-    },
-    services: [String],
-    bio: notReqString,
-    shipping: reqBoolean,
     img_logo: {
       ...notReqString,
       default: () => {
         return `https://eu.ui-avatars.com/api/?name=Test`;
-      },
-    },
-    img_banner: {
-      ...notReqString,
-      default: () => {
-        return `https://www.placecage.com/1800/400`;
-      },
-    },
-
-    img_user: {
-      ...notReqString,
-      default: () => {
-        return ` https://www.stevensegallery.com/200/300`;
       },
     },
 

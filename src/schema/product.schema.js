@@ -10,11 +10,14 @@ const productSchema = new Schema(
       ref: "User",
       required: true,
     },
-    product: notReqString,
+    name: notReqString,
     price: notReqString,
-    amount: notReqString,
     units: notReqString,
     status: notReqString,
+    sku: notReqString,
+    brand: notReqString,
+    description: notReqString,
+
     image: {
       ...notReqString,
       default: () => {

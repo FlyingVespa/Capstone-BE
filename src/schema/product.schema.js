@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 const reqString = { type: String, required: false };
 const notReqString = { type: String, required: false };
+const reqNumber = { type: Number, required: true };
 const productSchema = new Schema(
   {
     businessId: {
@@ -11,7 +12,7 @@ const productSchema = new Schema(
       required: true,
     },
     name: notReqString,
-    price: notReqString,
+    price: reqNumber,
     units: notReqString,
     status: notReqString,
     sku: notReqString,
@@ -32,8 +33,6 @@ productSchema.methods.toJSON = function () {
   const productDocument = this;
   const productObject = productDocument.toObject();
 
-  productObject.id = productObject._id;
-  delete productObject._id;
   delete productObject.__v;
   return productObject;
 };

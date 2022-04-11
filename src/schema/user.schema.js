@@ -91,7 +91,7 @@ const userSchema = new Schema(
       },
     },
 
-    products: { type: Schema.Types.ObjectId, ref: "Product" },
+    products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
   },
   { timestamps: true }
 );

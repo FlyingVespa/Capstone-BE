@@ -17,9 +17,11 @@ import Product from "../schema/product.schema.js";
 export const getAllProducts = async (req, res, next) => {
   try {
     const products = await Product.find();
+    console.log("products", products);
     res.send(products);
   } catch (error) {
-    next();
+    console.log(error);
+    next(error);
   }
 };
 // 2. GET Single
@@ -27,6 +29,7 @@ export const getAllProducts = async (req, res, next) => {
 export const getSingleProduct = async (req, res, next) => {
   const productId = req.params.userId;
   const product = await Product.find({ businessId: productId });
+
   res.send(product);
   //   if (product) {
   //     res.send(product);

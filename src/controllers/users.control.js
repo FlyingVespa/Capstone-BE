@@ -34,10 +34,15 @@ export const getSingleUser = async (req, res, next) => {
   try {
     // const userUrl = { url: req.params.userId };
     const userId = req.params.userId;
-    const user = await User.findById(userId);
+    let user = await User.findById(userId);
+
     if (!user) {
       return next(createError(404, `User with ID: ${userId} not found`));
     } else {
+      user.populated("products");
+      await user.populate({ path: "products", model: "Product" });
+      user.populated("products");
+      console.log(user);
       res.send(user);
     }
   } catch (error) {

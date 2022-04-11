@@ -57,10 +57,10 @@ server.use("/auth", loginRouter);
 // });
 
 // * ERROR MIDDLEWARES ******************************************************//
-server.use(unAuthorizedHandler);
-server.use(forbiddenErrHandler);
-server.use(serverErrHandler);
-server.use(badReqErrHandler);
-server.use(notFoundErrHandler);
+// server.use(unAuthorizedHandler);
+// server.use(forbiddenErrHandler);
+// server.use(serverErrHandler);
+// server.use(badReqErrHandler);
+// server.use(notFoundErrHandler);
 
 console.table(listEndpoints(server));

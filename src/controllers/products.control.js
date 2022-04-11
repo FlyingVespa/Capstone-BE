@@ -27,7 +27,6 @@ export const getAllProducts = async (req, res, next) => {
 export const getSingleProduct = async (req, res, next) => {
   const productId = req.params.userId;
   const product = await Product.find({ businessId: productId });
-  console.log(product);
   res.send(product);
   //   if (product) {
   //     res.send(product);

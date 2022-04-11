@@ -4,10 +4,8 @@ import { loginMiddleware } from "../middlewares/login.middleware.js";
 import { isUnique } from "../middlewares/product.middlewares.js";
 const productsRouter = express.Router();
 
-productsRouter
-  .route("/:userId/products/")
-  .get(Controllers.getSingleProduct); /*works*/
-
+productsRouter.route("/products").get(Controllers.getAllProducts);
+productsRouter.route("/:userId/products").get(Controllers.getSingleProduct);
 productsRouter
   .route("/:userId/products")
   .post(isUnique, Controllers.addNewProduct)

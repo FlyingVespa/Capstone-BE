@@ -14,7 +14,7 @@ export const getAllUsers = async (req, res, next) => {
     const users = await User.find();
     res.send(users);
   } catch (error) {
-    next();
+    next(error);
   }
 };
 

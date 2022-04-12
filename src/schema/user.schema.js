@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-
 const { Schema, model } = mongoose;
 
 const reqString = { type: String, required: false };
@@ -114,4 +113,4 @@ userSchema.methods.toJSON = function () {
   return userObject;
 };
 
-export default model("User", userSchema);
+export default model("User", userSchema, "users");

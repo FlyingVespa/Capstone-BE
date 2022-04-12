@@ -34,21 +34,40 @@ export const getSingleUser = async (req, res, next) => {
   try {
     // const userUrl = { url: req.params.userId };
     const userId = req.params.userId;
-    let user = await User.findById(userId);
+    const user = await User.findById(userId);
+    if (user) {
+      await user.populate({
+        path: "products",
+        match: userId,
+        model: "Product",
+      });
+      // .exec((err, products) => {
+      //   if (err) {
+      //     next(err);
+      //   }
+      //   console.log("Populated User " + products);
 
-    if (!user) {
-      return next(createError(404, `User with ID: ${userId} not found`));
-    } else {
-      user.populated("products");
-      await user.populate({ path: "products", model: "Product" });
-      user.populated("products");
-      console.log(user);
+      // });
       res.send(user);
     }
+    // if (!user) {
+    //   return next(createError(404, `User with ID: ${userId} not found`));
+    // } else {
+    //   // user.populated("products");
+    // await user.populate({ path: "products", model: "Product" });
   } catch (error) {
     next(error);
   }
 };
+
+// export const getSingleUser = (req, res, next) => {
+//   let userId = req.params.userId;
+//   User.findOne({ userId })
+//     .populate({ path: "products", model: "Product" })
+//     .exec((err, product) => {
+//       console.log(product);
+//     });
+// };
 
 // 4. UPDATE SINGLE **************************************************************************************/
 

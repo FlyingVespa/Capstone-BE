@@ -37,4 +37,4 @@ productSchema.methods.toJSON = function () {
   return productObject;
 };
 
-export default model("Product", productSchema);
+export default model("Product", productSchema, "products");

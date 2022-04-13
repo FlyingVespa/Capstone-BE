@@ -13,6 +13,7 @@ import Product from "../schema/product.schema.js";
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find();
+
     res.send(users);
   } catch (error) {
     next(error);
@@ -34,29 +35,32 @@ export const getMe = async (req, res, next) => {
 export const getSingleUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    User.findById(userId)
-      .populate({ path: "products", model: "Product" })
-      .exec((err, result) => {
-        if (err) {
-          console.log("err", err);
-          return res.send({ error: err });
-        }
-        console.log("result", result);
-        res.send({ result: result });
-      });
+    let user = await User.findById(userId);
+
+    if (user) {
+      let collectionOfProducts = await Product.find({ businessId: userId });
+      // check database for all products -> add too user (rewrites existing, preventing duplicate/null products)
+      if (user.products != collectionOfProducts) {
+        user.products = collectionOfProducts;
+        await user.save();
+      }
+      // populate the user.products with product Id
+      User.findById(userId)
+        .populate({ path: "products", model: "Product" })
+        .exec((err, result) => {
+          if (err) {
+            console.log("err", err);
+            return res.send({ error: err });
+          }
+          res.status(200).send(result);
+        });
+    } else {
+      next(createError(404, `User with id ${userId} not found!`));
+    }
   } catch (error) {
     next(error);
   }
 };
-
-// export const getSingleUser = (req, res, next) => {
-//   let userId = req.params.userId;
-//   User.findOne({ userId })
-//     .populate({ path: "products", model: "Product" })
-//     .exec((err, product) => {
-//       console.log(product);
-//     });
-// };
 
 // 4. UPDATE SINGLE **************************************************************************************/
 
@@ -84,10 +88,12 @@ export const updateUser = async (req, res, next) => {
 export const deleteUser = async (req, res, next) => {
   const userId = req.params.userId;
   // const userUrl = { url: req.params.userId };
+
   try {
+    await Product.deleteMany({ businessId: userId });
     await User.findByIdAndDelete(userId);
-    await req.user.deleteOne();
-    res.status(204).send("Deleted");
+    res.status(204).send("Account Deleted");
+    res.redirect("/");
   } catch (error) {
     next(error);
   }

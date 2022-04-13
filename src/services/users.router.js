@@ -8,7 +8,9 @@ usersRouter.route("/").get(Controllers.getAllUsers);
 usersRouter.route("/me").get(loginMiddleware, Controllers.getMe);
 // .post(loginMiddleware, Controllers.getMe)
 // .put(loginMiddleware, Controllers.updateUser)
-// .delete(loginMiddleware, Controllers.deleteUser);
-usersRouter.route("/:userId").get(Controllers.getSingleUser);
+usersRouter
+  .route("/:userId")
+  .get(Controllers.getSingleUser)
+  .delete(Controllers.deleteUser);
 
 export default usersRouter;

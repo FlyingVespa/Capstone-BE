@@ -50,10 +50,16 @@ export const addNewProduct = async (req, res, next) => {
     if (!user) {
       return next(createError(404, `User with id ${userId} not found`));
     }
-    const newProductData = { ...req.body, businessId: new ObjectId(userId) };
+    const newProductData = { ...req.body, businessId: userId };
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();
+    // await User.findOneAndUpdate(
+    //   { _id: userId },
+    //   { $push: { products: createdProduct } }
+    // );
+    user.products.push(createdProduct._id);
 
+    await user.save();
     res.status(201).send(createdProduct);
   } catch (error) {
     if (error.name === "ValidationError") {

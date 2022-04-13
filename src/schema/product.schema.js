@@ -18,7 +18,6 @@ const productSchema = new Schema(
     sku: notReqString,
     brand: notReqString,
     description: notReqString,
-
     image: {
       ...notReqString,
       default: () => {

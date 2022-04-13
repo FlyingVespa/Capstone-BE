@@ -32,7 +32,6 @@ const productSchema = new Schema(
 productSchema.methods.toJSON = function () {
   const productDocument = this;
   const productObject = productDocument.toObject();
-
   delete productObject.__v;
   return productObject;
 };

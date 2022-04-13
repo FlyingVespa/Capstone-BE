@@ -3,6 +3,7 @@ import createError from "http-errors";
 
 import { getTokens, refreshTokens } from "../middlewares/login.middleware.js";
 import User from "../schema/user.schema.js";
+import Product from "../schema/product.schema.js";
 // 1. GET all
 // 2. GET Single
 // 4. PUT Single
@@ -32,29 +33,17 @@ export const getMe = async (req, res, next) => {
 
 export const getSingleUser = async (req, res, next) => {
   try {
-    // const userUrl = { url: req.params.userId };
     const userId = req.params.userId;
-    const user = await User.findById(userId);
-    if (user) {
-      await user.populate({
-        path: "products",
-        match: userId,
-        model: "Product",
+    User.findById(userId)
+      .populate({ path: "products", model: "Product" })
+      .exec((err, result) => {
+        if (err) {
+          console.log("err", err);
+          return res.send({ error: err });
+        }
+        console.log("result", result);
+        res.send({ result: result });
       });
-      // .exec((err, products) => {
-      //   if (err) {
-      //     next(err);
-      //   }
-      //   console.log("Populated User " + products);
-
-      // });
-      res.send(user);
-    }
-    // if (!user) {
-    //   return next(createError(404, `User with ID: ${userId} not found`));
-    // } else {
-    //   // user.populated("products");
-    // await user.populate({ path: "products", model: "Product" });
   } catch (error) {
     next(error);
   }

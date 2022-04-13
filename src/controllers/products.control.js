@@ -50,7 +50,7 @@ export const addNewProduct = async (req, res, next) => {
     if (!user) {
       return next(createError(404, `User with id ${userId} not found`));
     }
-    const newProductData = { ...req.body, businessId: userId };
+    const newProductData = { ...req.body, businessId: new ObjectId(userId) };
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();
 

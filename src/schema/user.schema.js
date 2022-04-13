@@ -42,44 +42,44 @@ const userSchema = new Schema(
       {
         day: notReqString,
         trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
+        openingHours: notReqString,
+        closingHours: notReqString,
       },
       {
         day: notReqString,
         trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
+        openingHours: notReqString,
+        closingHours: notReqString,
       },
       {
         day: notReqString,
         trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
+        openingHours: notReqString,
+        closingHours: notReqString,
       },
       {
         day: notReqString,
         trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
+        openingHours: notReqString,
+        closingHours: notReqString,
       },
       {
         day: notReqString,
         trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
+        openingHours: notReqString,
+        closingHours: notReqString,
       },
       {
         day: notReqString,
         trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
+        openingHours: notReqString,
+        closingHours: notReqString,
       },
       {
         day: notReqString,
         trading: reqBoolean,
-        open: notReqString,
-        closed: notReqString,
+        openingHours: notReqString,
+        closingHours: notReqString,
       },
     ],
 
@@ -113,4 +113,4 @@ userSchema.methods.toJSON = function () {
   return userObject;
 };
 
-export default model("User", userSchema, "users");
+export default model("User", userSchema);

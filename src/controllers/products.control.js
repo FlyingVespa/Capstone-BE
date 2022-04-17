@@ -53,12 +53,7 @@ export const addNewProduct = async (req, res, next) => {
     const newProductData = { ...req.body, businessId: userId };
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();
-    // await User.findOneAndUpdate(
-    //   { _id: userId },
-    //   { $push: { products: createdProduct } }
-    // );
-    user.products.push(createdProduct._id);
-
+    user.products.push(createdProduct);
     await user.save();
     res.status(201).send(createdProduct);
   } catch (error) {

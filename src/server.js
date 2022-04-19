@@ -48,14 +48,6 @@ server.use("/profile", clientsRouter);
 server.use("/", productsRouter);
 server.use("/auth", loginRouter);
 
-// server.get("/", (req, res) => {
-//   res.send("welcome to a simple HTTP cookie server");
-// });
-// server.get("/setcookie", (req, res) => {
-//   res.cookie(`Cookie token name`, `encrypted cookie string Value`);
-//   res.send("Cookie have been saved successfully");
-// });
-
 // * ERROR MIDDLEWARES ******************************************************//
 // server.use(unAuthorizedHandler);
 // server.use(forbiddenErrHandler);

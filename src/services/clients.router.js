@@ -6,7 +6,7 @@ import { usersImgParser } from "../settings/cloudinary.js";
 const clientsRouter = express.Router();
 
 clientsRouter.route("/").get(Controllers.getAllClients);
-// clientsRouter.route("/:clientId").get(Controllers.getSingleClient);
+clientsRouter.route("/:clientId").get(Controllers.getSingleClient);
 clientsRouter
   .route("/me")
   .get(loginMiddleware, Controllers.getMe)

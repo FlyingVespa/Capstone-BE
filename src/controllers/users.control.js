@@ -4,6 +4,7 @@ import createError from "http-errors";
 import { getTokens, refreshTokens } from "../middlewares/login.middleware.js";
 import User from "../schema/user.schema.js";
 import Product from "../schema/product.schema.js";
+import { v2 as cloudinary } from "cloudinary";
 // 1. GET all
 // 2. GET Single
 // 4. PUT Single
@@ -90,10 +91,12 @@ export const deleteUser = async (req, res, next) => {
   // const userUrl = { url: req.params.userId };
 
   try {
+    const products = await Product.find({ businessId: userId });
+
     await Product.deleteMany({ businessId: userId });
     await User.findByIdAndDelete(userId);
+    // res.redirect("/");
     res.status(204).send("Account Deleted");
-    res.redirect("/");
   } catch (error) {
     next(error);
   }

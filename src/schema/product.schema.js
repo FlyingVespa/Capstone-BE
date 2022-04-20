@@ -18,6 +18,7 @@ const productSchema = new Schema(
     sku: notReqString,
     brand: notReqString,
     description: notReqString,
+    cloudinary_id: notReqString,
     image: {
       ...notReqString,
       default: () => {

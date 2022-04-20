@@ -2,7 +2,7 @@ import createError from "http-errors";
 
 import User from "../schema/user.schema.js";
 import Product from "../schema/product.schema.js";
-
+import { v2 as cloudinary } from "cloudinary";
 // 1. GET all
 // 2. GET Single
 // 3. POST Create Single
@@ -57,17 +57,25 @@ export const getSingleProducts = async (req, res, next) => {
 export const addNewProduct = async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    console.log(req.params);
     const user = await User.findById(userId);
     if (!user) {
       return next(createError(404, `User with id ${userId} not found`));
     }
-    const newProductData = { ...req.body, businessId: userId };
+
+    const newProductData = {
+      ...req.body,
+      businessId: user,
+      image: `https://eu.ui-avatars.com/api/?name=${req.body.name}`,
+      cloudinary_id: "none",
+    };
+
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();
-    user.products.push(createdProduct);
-    await user.save();
+
+    await user.products.push(createdProduct);
+    user.save();
     res.status(201).send(createdProduct);
+    console.log("CP", createdProducts);
   } catch (error) {
     if (error.name === "ValidationError") {
       next(createError(400, error));
@@ -81,6 +89,7 @@ export const addNewProduct = async (req, res, next) => {
 export const updateProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
+
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
       req.body,
@@ -103,9 +112,14 @@ export const updateProduct = async (req, res, next) => {
 export const deleteProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
-    const deletedProduct = await Product.findByIdAndDelete(productId);
+    const product = await Product.findById(productId);
 
-    if (deletedProduct) {
+    if (product) {
+      await cloudinary.uploader.destroy(
+        `CAPSTONE/products/${product.businessId}/${productId}`
+      );
+
+      await product.remove();
       res
         .status(204)
         .send(`🚮 Product with _id ${productId}, successfully deleted`);
@@ -137,11 +151,14 @@ export const deleteProduct = async (req, res, next) => {
 export const uploadProductImage = async (req, res, next) => {
   try {
     let image;
+
     if (req.body.url) {
       image = req.body.url;
     } else {
       image = req.file.path;
     }
+
+    console.log(image);
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.productId,
       { image: image },
@@ -151,7 +168,7 @@ export const uploadProductImage = async (req, res, next) => {
       return next(
         createError(404, `Product with id ${req.params.productId} not found`)
       );
-    res.json(updatedProduct);
+    res.send(updatedProduct);
   } catch (error) {
     next(error);
   }

@@ -75,7 +75,7 @@ export const addNewProduct = async (req, res, next) => {
     await user.products.push(createdProduct);
     user.save();
     res.status(201).send(createdProduct);
-    console.log("CP", createdProducts);
+    console.log("CP", createdProduct);
   } catch (error) {
     if (error.name === "ValidationError") {
       next(createError(400, error));
@@ -115,10 +115,10 @@ export const deleteProduct = async (req, res, next) => {
     const product = await Product.findById(productId);
 
     if (product) {
+      const user = await User.findById(product.businesId);
       await cloudinary.uploader.destroy(
         `CAPSTONE/products/${product.businessId}/${productId}`
       );
-
       await product.remove();
       res
         .status(204)

@@ -72,7 +72,7 @@ export const addNewProduct = async (req, res, next) => {
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();
 
-    await user.products.push(createdProduct);
+    await user.products.push(createdProduct._id, createdProduct.name);
     user.save();
     res.status(201).send(createdProduct);
     console.log("CP", createdProduct);

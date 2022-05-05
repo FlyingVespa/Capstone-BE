@@ -29,7 +29,7 @@ export const loginUser = async (req, res) => {
           role: "client",
         });
       } else {
-        res.status(400).json({ error: "Invalid Client Password" });
+        res.status(401).send({ message: "Invalid Client Password" });
       }
     } else if (user && !client) {
       const validPassword = await bcrypt.compare(
@@ -49,10 +49,10 @@ export const loginUser = async (req, res) => {
           role: "user",
         });
       } else {
-        res.status(400).json({ error: "Invalid Client Password" });
+        res.status(401).send({ message: "Invalid User Password" });
       }
     } else if (!user && !client) {
-      res.status(404).json({ error: "User does not exist" });
+      res.status(404).send({ message: "User does not exist" });
     }
   } catch (error) {
     console.log(error.message);
@@ -61,18 +61,17 @@ export const loginUser = async (req, res) => {
 };
 
 export const userLogout = async (req, res, next) => {
-  debugger;
   console.log("debug logout 1");
   const user = req.user;
   try {
-    // await user.updateOne({ refreshToken: "" });
-
-    req.session.destroy(function (err) {
-      res.redirect("/");
+    await user.updateOne({ refreshToken: "" });
+    res.clearCookie("accessToken", {
+      httpOnly: true,
     });
-    // res.clearCookie("accessToken");
-    // res.clearCookie("refreshToken");
-    // res.sendStatus(204);
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+    });
+    res.sendStatus(204);
   } catch (error) {
     console.log("debug error", error);
     next(createError(500));

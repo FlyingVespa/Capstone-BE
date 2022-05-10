@@ -36,7 +36,7 @@ export const loginUser = async (req, res) => {
         req.body.password,
         user.password
       );
-      // if (validPassword) {
+      if (validPassword) {
       const { accessToken, refreshToken } = await getTokens(user);
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
@@ -48,9 +48,9 @@ export const loginUser = async (req, res) => {
         message: "Logged in successfully as USER😊 👌",
         role: "user",
       });
-      // } else {
-      //   res.status(401).send({ message: "Invalid User Password" });
-      // }
+      } else {
+        res.status(401).send({ message: "Invalid User Password" });
+      }
     } else if (!user && !client) {
       res.status(404).send({ message: "User does not exist" });
     }

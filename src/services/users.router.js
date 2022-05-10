@@ -12,7 +12,7 @@ usersRouter
   .put(loginMiddleware, Controllers.updateUser);
 usersRouter
   .route("/:userId")
-  .get(Controllers.getSingleUser)
+  .get(loginMiddleware, Controllers.getSingleUser)
   .delete(Controllers.deleteUser);
 
 export default usersRouter;

@@ -61,10 +61,12 @@ export const addNewProduct = async (req, res, next) => {
     if (!user) {
       return next(createError(404, `User with id ${userId} not found`));
     }
-
+    if (req?.body?.price) {
+      req.body.price = parseFloat(req?.body?.price);
+    }
     const newProductData = {
       ...req.body,
-      businessId: user,
+      businessId: user._id,
       image: `https://eu.ui-avatars.com/api/?name=${req.body.name}`,
       cloudinary_id: "none",
     };
@@ -72,8 +74,10 @@ export const addNewProduct = async (req, res, next) => {
     const newProduct = new Product(newProductData);
     const createdProduct = await newProduct.save();
 
-    await user.products.push(createdProduct._id, createdProduct.name);
-    user.save();
+    await User.updateOne(
+      { _id: user._id },
+      { $push: { products: createdProduct._id } }
+    );
     res.status(201).send(createdProduct);
     console.log("CP", createdProduct);
   } catch (error) {

@@ -16,6 +16,7 @@ export const registerAccount = async (req, res, next) => {
 
       return res.status(201).send(client);
     }
+    return res.status(422).send({ error: "role not defined" });
   } catch (error) {
     if (error.name === "validationError") {
       next(createError(400, error));

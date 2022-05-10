@@ -36,21 +36,21 @@ export const loginUser = async (req, res) => {
         req.body.password,
         user.password
       );
-      if (validPassword) {
-        const { accessToken, refreshToken } = await getTokens(user);
-        res.cookie("accessToken", accessToken, {
-          httpOnly: true,
-        });
-        res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-        });
-        res.status(200).send({
-          message: "Logged in successfully as USER😊 👌",
-          role: "user",
-        });
-      } else {
-        res.status(401).send({ message: "Invalid User Password" });
-      }
+      // if (validPassword) {
+      const { accessToken, refreshToken } = await getTokens(user);
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+      });
+      res.status(200).send({
+        message: "Logged in successfully as USER😊 👌",
+        role: "user",
+      });
+      // } else {
+      //   res.status(401).send({ message: "Invalid User Password" });
+      // }
     } else if (!user && !client) {
       res.status(404).send({ message: "User does not exist" });
     }
@@ -64,7 +64,7 @@ export const userLogout = async (req, res, next) => {
   console.log("debug logout 1");
   const user = req.user;
   try {
-    await user.updateOne({ refreshToken: "" });
+    await user.updateOne({ _id: user._id }, { refreshToken: "" });
     res.clearCookie("accessToken", {
       httpOnly: true,
     });

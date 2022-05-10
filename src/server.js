@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import listEndpoints from "express-list-endpoints";
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
+import "dotenv/config";
 import {
   unAuthorizedHandler,
   forbiddenErrHandler,

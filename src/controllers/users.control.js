@@ -13,7 +13,32 @@ import { v2 as cloudinary } from "cloudinary";
 // 1. GET ALL **************************************************************************************/
 export const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const users = await User.aggregate([
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "businessId",
+          as: "products",
+        },
+      },
+      {
+        $match: {
+          ...(req?.query?.search && {
+            $or: [
+              { businessname: new RegExp(req.query.search, "i") },
+              { "products.name": new RegExp(req.query.search, "i") },
+              { services: new RegExp(req.query.search, "i") },
+            ],
+          }),
+          // ...req.query.business && {businessname: new RegExp(req.query.search, "i")},
+          // ...req.query.products && {"products.name": new RegExp(req.query.search, "i")},
+          // ...req.query.services && {"services": new RegExp(req.query.search, "i")},
+          // "tradingTimes.day": 2,
+          // "tradingTimes.openingHours": { $gte: currenttime, $lt: currentTime },
+        },
+      },
+    ]);
 
     res.send(users);
   } catch (error) {
